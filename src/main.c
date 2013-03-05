@@ -188,7 +188,7 @@ void main(void) {
     // MTJ added second argument for OpenTimer1()
     OpenTimer1(TIMER_INT_ON & T1_SOURCE_FOSC_4 & T1_PS_1_4 & T1_16BIT_RW & T1_OSC1EN_OFF & T1_SYNC_EXT_OFF,0x0);
 #else
-    OpenTimer1(TIMER_INT_ON & T1_PS_1_8 & T1_16BIT_RW & T1_SOURCE_INT & T1_OSC1EN_OFF & T1_SYNC_EXT_OFF);
+    OpenTimer1(TIMER_INT_ON & T1_PS_1_4 & T1_16BIT_RW & T1_SOURCE_INT & T1_OSC1EN_OFF & T1_SYNC_EXT_OFF);
 #endif
 
     // Decide on the priority of the enabled peripheral interrupts
@@ -264,6 +264,7 @@ void main(void) {
 
     //Load Drivers
     DriverColorAdd(0x4F);
+    DriverColorAdd(0x4F);
    // DriverIRAdd(0x49);
 
     static int currentPollDriver = 0;
@@ -294,14 +295,18 @@ void main(void) {
                 };
                 case MSGT_I2C_DATA:
                 {
-                    if (currentPollDriver < NumberOfDrivers) {
-                        DriverTable[currentPollDriver].respond(DriverTable[currentPollDriver].context, msgbuffer);
-                    }
+                  //IR Sensor
+                  unsigned char *msg = msgbuffer+1;
+                  //0 means no data is available and 0xFF means that there is an error (No connection`)
+                  if (msg[1] != 0 && msg[1] != 0xFF)
+                    start_UART_send(8, msg);
                     
-                    ++currentPollDriver;
-                    if (currentPollDriver < NumberOfDrivers) {
-                      DriverTable[currentPollDriver].poll(DriverTable[currentPollDriver].context);
-                    }
+                    // ++currentPollDriver;
+                    // 
+                    // // ++currentPollDriver;
+                    // if (currentPollDriver < NumberOfDrivers) {
+                    //   DriverTable[currentPollDriver].poll(DriverTable[currentPollDriver].context);
+                    // }
                 };
                 case MSGT_I2C_DBG:
                 {
@@ -346,8 +351,14 @@ void main(void) {
             switch (msgtype) {
                 case MSGT_TIMER1:
                 {
-                  currentPollDriver = 0;
-                  DriverTable[0].poll(DriverTable[0].context);
+                  //What to pull?
+                  ++currentPollDriver;
+
+                  if (currentPollDriver % 2 == 0) {
+                     i2c_master_recv(0x4F, 0x10, 8);
+                  } else {
+                      i2c_master_recv(0x4F, 0x12, 8);
+                  }
 
 //                    msgbuffer[0] = 0x10;
 //                    msgbuffer[1] = 0x5A;
@@ -360,7 +371,10 @@ void main(void) {
                 case MSGT_OVERRUN:
                 case MSGT_UART_DATA:
                 {
-                    uart_lthread(&uthread_data, msgtype, length, msgbuffer);
+                    LATAbits.LA0 = !LATAbits.LA0;
+                    //unsigned char *msg = msgbuffer + 3;
+                     i2c_master_send(msgbuffer[0], 8, msgbuffer);
+                    //uart_lthread(&uthread_data, msgtype, length, msgbuffer);
                     break;
                 };
                 default:

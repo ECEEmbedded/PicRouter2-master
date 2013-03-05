@@ -15,12 +15,10 @@
 }
 
 @respond = %{
-  //TRISA = 0;
-  LATAbits.LATA2 = !LATAbits.LATA2;
-  //i2c_master_recv(data->input, 0x10, 8);
+  start_UART_send(8, data);
 }
 
 @poll = %{
     //DebugPrint(self->id);
-    i2c_master_recv(0x3F, 0x10, 8);
+    i2c_master_recv(self->id, 0x10, 8);
 }

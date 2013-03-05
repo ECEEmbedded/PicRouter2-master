@@ -27,16 +27,14 @@ void DriverColorRespond(Driver_t *driver, unsigned char *rcvData) {
 DriverColorData *data = (DriverColorData *)rcvData;
 DriverColorMembers *self = (DriverColorMembers *)driver;
 
-  //TRISA = 0;
-  LATAbits.LATA2 = !LATAbits.LATA2;
-  //i2c_master_recv(data->input, 0x10, 8);
+  start_UART_send(8, data);
 
 }
 void DriverColorPoll(Driver_t *driver) {
 DriverColorMembers *self = (DriverColorMembers *)driver;
 
     //DebugPrint(self->id);
-    i2c_master_recv(0x3F, 0x10, 8);
+    i2c_master_recv(self->id, 0x10, 8);
 
 }
 
