@@ -371,7 +371,6 @@ void main(void) {
                 case MSGT_OVERRUN:
                 case MSGT_UART_DATA:
                 {
-                    LATAbits.LA0 = !LATAbits.LA0;
                     //unsigned char *msg = msgbuffer + 3;
                      i2c_master_send(msgbuffer[0], 8, msgbuffer);
                     //uart_lthread(&uthread_data, msgtype, length, msgbuffer);

@@ -2,7 +2,6 @@
 #include "interrupts.h"
 #include "user_interrupts.h"
 #include "messages.h"
-#include "i2cMaster.h"
 
 //----------------------------------------------------------------------------
 // Note: This code for processing interrupts is configured to allow for high and
@@ -13,7 +12,6 @@
 //       enabled.
 
 void enable_interrupts() {
-    LATAbits.LATA1 = !LATAbits.LATA1;
     // Peripheral interrupts can have their priority set to high or low
     // enable high-priority interrupts and low-priority interrupts
     RCONbits.IPEN = 1;
@@ -91,7 +89,7 @@ void InterruptHandlerHigh() {
         // clear the interrupt flag
         PIR1bits.SSPIF = 0;
         // call the handler
-        i2c_master_int_handler();
+        i2c_int_handler();
     }
 
     // check to see if we have an interrupt on timer 0
@@ -99,13 +97,6 @@ void InterruptHandlerHigh() {
         INTCONbits.TMR0IF = 0; // clear this interrupt flag
         // call whatever handler you want (this is "user" defined)
         timer0_int_handler();
-    }
-
-    // check to see if we have an interrupt on USART TX
-    if (PIR1bits.TXIF) {
-//        PIR1bits.TXIF = 0;
-     //   TXEN = 0;
-       // uart_send_int_handler();
     }
 
 
@@ -142,11 +133,17 @@ void InterruptHandlerLow() {
     }
 
     // check to see if we have an interrupt on USART RX
-    if (PIR1bits.RCIF) {
+    else if (PIR1bits.RCIF) {
         PIR1bits.RCIF = 0; //clear interrupt flag
         uart_recv_int_handler();
     }
 
+    // check to see if we have an interrupt on USART TX
+    else if (PIR1bits.TXIF) {
+//        PIR1bits.TXIF = 0;  // Can't clear this directly...
+        uart_send_int_handler();
     }
+
+}
 
 
