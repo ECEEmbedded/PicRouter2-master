@@ -21,7 +21,14 @@ void DebugPrint(unsigned char out);
  * Just display some lights, good for startup test
  * ##################################################
  */
-void DebugSignal();
+// void DebugSignal();
 
+/*
+ * ##################################################
+ * sendValuesToPins
+ * Just sending some values to pins RA1-3
+ * ##################################################
+ */
+ void sendValuesToPins(char, char, char);
 
 #endif

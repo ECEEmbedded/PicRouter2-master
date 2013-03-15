@@ -17,6 +17,9 @@ void enable_interrupts() {
     RCONbits.IPEN = 1;
     INTCONbits.GIEH = 1;
     INTCONbits.GIEL = 1;
+#ifdef __MASTER2680
+    INTCON2bits.TMR0IP = 0; //Timer 0 low priority
+#endif
 }
 
 int in_high_int() {
@@ -86,10 +89,20 @@ void InterruptHandlerHigh() {
 
     // check to see if we have an I2C interrupt
     if (PIR1bits.SSPIF) {
+
+#ifdef __MOTOR2680
+        CloseTimer0();
+#endif
+
         // clear the interrupt flag
         PIR1bits.SSPIF = 0;
+
         // call the handler
         i2c_int_handler();
+
+#ifdef __MOTOR2680
+        OpenTimer0(TIMER_INT_ON & T0_PS_1_8 & T0_8BIT & T0_SOURCE_INT);
+#endif
     }
 
     // check to see if we have an interrupt on timer 0
@@ -99,11 +112,11 @@ void InterruptHandlerHigh() {
         timer0_int_handler();
     }
 
-
-    // Check for ADC interrupt
-    //if (PIR1bits.ADIF) {
-    //    adcIntHandler();
-    //}
+    // check to see if we have an interrupt on USART TX
+    if (PIR1bits.TXIF) {
+        PIR1bits.TXIF = 0; //clear interrupt flag
+        uart_send_int_handler();
+    }
 
     // here is where you would check other interrupt flags.
 
@@ -132,18 +145,33 @@ void InterruptHandlerLow() {
         timer1_int_handler();
     }
 
+    // // check to see if we have an interrupt on the ADC
+    // if(PIR1bits.ADIF){
+    //     PIR1bits.ADIF = 0; //clear interrupt flag
+    //     adc_int_handler();
+    // }
+
     // check to see if we have an interrupt on USART RX
-    else if (PIR1bits.RCIF) {
+    if (PIR1bits.RCIF) {
         PIR1bits.RCIF = 0; //clear interrupt flag
         uart_recv_int_handler();
     }
 
     // check to see if we have an interrupt on USART TX
-    else if (PIR1bits.TXIF) {
-//        PIR1bits.TXIF = 0;  // Can't clear this directly...
+    if (PIR1bits.TXIF) {
+//        PIR1bits.TXIF = 0;  // Can't clear this directly... *From Matt: Not sure if this is true or not...*
+        PIR1bits.TXIF = 0; //clear interrupt flag
         uart_send_int_handler();
     }
 
+#ifdef __MASTER2680
+    // check to see if we have an interrupt on timer 0
+    if (INTCONbits.TMR0IF) {
+        INTCONbits.TMR0IF = 0; // clear this interrupt flag
+        // call whatever handler you want (this is "user" defined)
+        timer0_int_handler();
+    }
+#endif
 }
 
 

@@ -7,7 +7,10 @@
 #define __USE18F45J10 1
 #else
 #ifdef _18F2680
-#define __USE18F2680 1
+//#define __MASTER2680
+//#define __SLAVE2680
+#define __MOTOR2680
+#define __USE18F2680
 #else
 #ifdef _18F26J50
 #define __USE18F26J50 1
@@ -43,5 +46,24 @@
 #define MSGT_I2C_MASTER_RECV_COMPLETE 45
 #define MSGT_I2C_MASTER_RECV_FAILED 46
 
+//I2C bus message parameters
+#define I2C_MSG_SIZE 4
+#define COLOR_MSG_TYPE 0x10
+#define ENCODERS_MSG_TYPE 0x11
+#define IR_MSG_TYPE 0x12
+#define COLOR_EMPTY_MSG_TYPE 0x50
+#define ENCODERS_EMPTY_MSG_TYPE 0x51
+#define IR_EMPTY_MSG_TYPE 0x52
+#define GENERIC_EMPTY_MSG_TYPE 0x53
+
+//I2C slave addresses
+#define COLOR_SENSOR_ADDR 0x9A
+#define IR_SENSOR_ADDR 0x9C
+#define ENCODERS_ADDR 0x9E
+
+#endif
+
+#ifdef __USE18F26J50
+#pragma config XINST = OFF
 #endif
 

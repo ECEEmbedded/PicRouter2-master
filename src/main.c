@@ -124,18 +124,20 @@ Something is messed up
 
 void main(void) {
     //Tmp Code
-    unsigned char ADCbufferI2C[8];
-    unsigned char ADCBufferLen;
+    unsigned char ADCbufferI2C[8];      // Are these necessary anymore?
+    unsigned char ADCBufferLen;         // Are these necessary anymore?
 
-    char c;
+    char c;                             // Is this even used?
     signed char length;
     unsigned char msgtype;
     unsigned char last_reg_recvd;
     uart_comm uc;
-//    i2c_comm ic;
+    i2c_comm ic;
     unsigned char msgbuffer[MSGLEN + 1];
     unsigned char i;
     uart_thread_struct uthread_data; // info for uart_lthread
+
+    // Timer values
     timer1_thread_struct t1thread_data; // info for timer1_lthread
     timer0_thread_struct t0thread_data; // info for timer0_lthread
 
@@ -161,10 +163,18 @@ void main(void) {
     init_uart_snd_rcv(&uc);
 
     // initialize the i2c code
-  //   init_i2c(&ic);
+    init_i2c(&ic);
 
+#ifndef __SLAVE2680
     // init the timer1 lthread
     init_timer1_lthread(&t1thread_data);
+#ifdef __MASTER2680
+    init_timer0_lthread(&t0thread_data);
+#endif
+#ifdef __MOTOR2680
+    init_timer0_lthread(&t0thread_data);
+#endif
+#endif
 
     // initialize message queues before enabling any interrupts
     init_queues();
@@ -174,27 +184,44 @@ void main(void) {
     LATA = 0x00;
 
     // how to set up PORTA for input (for the V4 board with the PIC2680)
-    /*
+
             PORTA = 0x0;	// clear the port
             LATA = 0x0;		// clear the output latch
             ADCON1 = 0x0F;	// turn off the A2D function on these pins
             // Only for 40-pin version of this chip CMCON = 0x07;	// turn the comparator off
             TRISA = 0x0F;	// set RA3-RA0 to inputs
-     */
+
 
     // initialize Timers
-    OpenTimer0(TIMER_INT_ON & T0_16BIT & T0_SOURCE_INT & T0_PS_1_128);
+    //OpenTimer0(TIMER_INT_ON & T0_16BIT & T0_SOURCE_INT & T0_PS_1_128);
+#ifdef __USE18F2680
+#ifdef __MOTOR2680
+    OpenTimer0(TIMER_INT_ON & T0_PS_1_8 & T0_8BIT & T0_SOURCE_INT);
+    OpenTimer1(TIMER_INT_ON & T1_PS_1_8 & T1_16BIT_RW & T1_SOURCE_INT & T1_OSC1EN_OFF & T1_SYNC_EXT_OFF);
+#endif
+#ifdef __MASTER2680
+    OpenTimer0(TIMER_INT_ON & T0_PS_1_2 & T0_16BIT & T0_SOURCE_INT);
+    OpenTimer1(TIMER_INT_ON & T1_PS_1_2 & T1_16BIT_RW & T1_SOURCE_INT & T1_OSC1EN_OFF & T1_SYNC_EXT_OFF);
+#endif
+#else
 #ifdef __USE18F26J50
     // MTJ added second argument for OpenTimer1()
     OpenTimer1(TIMER_INT_ON & T1_SOURCE_FOSC_4 & T1_PS_1_4 & T1_16BIT_RW & T1_OSC1EN_OFF & T1_SYNC_EXT_OFF,0x0);
 #else
     OpenTimer1(TIMER_INT_ON & T1_PS_1_4 & T1_16BIT_RW & T1_SOURCE_INT & T1_OSC1EN_OFF & T1_SYNC_EXT_OFF);
 #endif
+#endif
+
+    // Peripheral interrupts can have their priority set to high or low
+    // enable high-priority interrupts and low-priority interrupts
+    enable_interrupts();
 
     // Decide on the priority of the enabled peripheral interrupts
     // 0 is low, 1 is high
     // Timer1 interrupt
     IPR1bits.TMR1IP = 0;
+    // ADC interrupt
+    IPR1bits.ADIP = 0;
     // USART RX interrupt
     IPR1bits.RCIP = 0;
     // I2C interrupt
@@ -222,20 +249,30 @@ void main(void) {
 #endif
 
     // must specifically enable the I2C interrupts
-    PIE1bits.SSPIE = 1;
+    PIE1bits.SSPIE = 1;     //Enable interrupt for the MSSP (I2C module)
 
+
+#ifdef __MOTOR2680
+    OpenUSART(USART_TX_INT_OFF & USART_RX_INT_ON & USART_ASYNCH_MODE & USART_EIGHT_BIT &
+            USART_CONT_RX & USART_BRGH_LOW, 0x1A);
+#endif
+#ifdef __SLAVE2680
     // configure the hardware USART device
+    OpenUSART(USART_TX_INT_OFF & USART_RX_INT_ON & USART_ASYNCH_MODE & USART_EIGHT_BIT &
+            USART_CONT_RX & USART_BRGH_LOW, 0x33);
+#endif
+#ifdef __MASTER2680
+    OpenUSART(USART_TX_INT_OFF & USART_RX_INT_ON & USART_ASYNCH_MODE & USART_EIGHT_BIT &
+            USART_CONT_RX & USART_BRGH_LOW, 0x33);
+#endif
 #ifdef __USE18F26J50
+    // configure the hardware USART device
     Open1USART(USART_TX_INT_OFF & USART_RX_INT_ON & USART_ASYNCH_MODE & USART_EIGHT_BIT &
         USART_CONT_RX & USART_BRGH_LOW, 0x19);
 #else
  //   OpenUSART(USART_TX_INT_OFF & USART_RX_INT_ON & USART_ASYNCH_MODE & USART_EIGHT_BIT &
         //    USART_CONT_RX & USART_BRGH_LOW, 0x19);
 #endif
-
-    // Peripheral interrupts can have their priority set to high or low
-    // enable high-priority interrupts and low-priority interrupts
-    enable_interrupts();
 
     /* Junk to force an I2C interrupt in the simulator (if you wanted to)
     PIR1bits.SSPIF = 1;
@@ -259,7 +296,7 @@ void main(void) {
     // structure them properly
 
     //Init I2C
-    I2CInit();
+    //I2CInit();
 //    OpenI2C(MASTER, SLEW_OFF);
 
     //Load Drivers
@@ -268,6 +305,10 @@ void main(void) {
    // DriverIRAdd(0x49);
 
     static int currentPollDriver = 0;
+
+#ifdef __MASTER2680
+    unsigned char coMsgCount = 0;
+#endif
     while (1) {
 
         // Call a routine that blocks until either on the incoming
@@ -288,26 +329,40 @@ void main(void) {
             }
         } else {
             switch (msgtype) {
+                case MSGT_I2C_MASTER_SEND_COMPLETE:
+                {
+                    break;
+                };
+                case MSGT_I2C_MASTER_SEND_FAILED:
+                {
+                    //handle error
+                    break;
+                };
+                case MSGT_I2C_MASTER_RECV_COMPLETE:
+                {
+                    uart_lthread(&uthread_data, MSGT_UART_DATA, length, msgbuffer);
+                    break;
+                };
                 case MSGT_TIMER0:
                 {
                     timer0_lthread(&t0thread_data, msgtype, length, msgbuffer);
                     break;
                 };
                 case MSGT_I2C_DATA:
-                {
+                //{
                   //IR Sensor
-                  unsigned char *msg = msgbuffer+1;
+                  //unsigned char *msg = msgbuffer+1;
                   //0 means no data is available and 0xFF means that there is an error (No connection`)
-                  if (msg[1] != 0 && msg[1] != 0xFF)
-                    start_UART_send(8, msg);
-                    
+                  //if (msg[1] != 0 && msg[1] != 0xFF)
+                  //  start_UART_send(8, msg);
+
                     // ++currentPollDriver;
-                    // 
+                    //
                     // // ++currentPollDriver;
                     // if (currentPollDriver < NumberOfDrivers) {
                     //   DriverTable[currentPollDriver].poll(DriverTable[currentPollDriver].context);
                     // }
-                };
+                //};
                 case MSGT_I2C_DBG:
                 {
                     // Here is where you could handle debugging, if you wanted
@@ -352,13 +407,13 @@ void main(void) {
                 case MSGT_TIMER1:
                 {
                   //What to pull?
-                  ++currentPollDriver;
+                  //++currentPollDriver;
 
-                  if (currentPollDriver % 2 == 0) {
-                     i2c_master_recv(0x4F, 0x10, 8);
-                  } else {
-                      i2c_master_recv(0x4F, 0x12, 8);
-                  }
+                  //if (currentPollDriver % 2 == 0) {
+                  //   i2c_master_recv(0x4F, 0x10, 8);
+                  //} else {
+                  //    i2c_master_recv(0x4F, 0x12, 8);
+                  //}
 
 //                    msgbuffer[0] = 0x10;
 //                    msgbuffer[1] = 0x5A;
@@ -367,12 +422,22 @@ void main(void) {
                     timer1_lthread(&t1thread_data, msgtype, length, msgbuffer);
                     break;
                 };
-             
+                case MSGT_I2C_DATA:
+                {
+                    //Send value over I2C
+                    FromMainLow_sendmsg(length, msgtype, (void *) msgbuffer);
+                };
                 case MSGT_OVERRUN:
                 case MSGT_UART_DATA:
                 {
+#ifdef __SLAVE2680
+                    uart_lthread(&uthread_data, msgtype, length, msgbuffer);
+#endif
+#ifdef __MASTER2680
+                    FromMainLow_sendmsg(length, msgtype, (void*) msgbuffer);
+#endif
                     //unsigned char *msg = msgbuffer + 3;
-                     i2c_master_send(msgbuffer[0], 8, msgbuffer);
+                     //i2c_master_send(msgbuffer[0], 8, msgbuffer);
                     //uart_lthread(&uthread_data, msgtype, length, msgbuffer);
                     break;
                 };

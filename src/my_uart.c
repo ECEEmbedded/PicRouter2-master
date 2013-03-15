@@ -1,4 +1,4 @@
-#include "maindefs.h"
+#include maindefs.h
 #ifndef __XC8
 #include <usart.h>
 #else
@@ -26,11 +26,6 @@ void uart_recv_int_handler() {
 #ifdef __USE18F26J50
     if (DataRdy1USART()) {
         uc_ptr->buffer[uc_ptr->buflen] = Read1USART();
-#else
-    if (DataRdyUSART()) {
-        uc_ptr->buffer[uc_ptr->buflen] = ReadUSART();
-#endif
-
         uc_ptr->buflen++;
         // check if a message should be sent
         if (uc_ptr->buflen == MAXUARTBUF) {
@@ -38,17 +33,48 @@ void uart_recv_int_handler() {
             uc_ptr->buflen = 0;
         }
     }
-#ifdef __USE18F26J50
-    if (USART1_Status.OVERRUN_ERROR == 1) {
 #else
-    if (USART_Status.OVERRUN_ERROR == 1) {
+    if (DataRdyUSART()) {
+        uc_ptr->buffer[uc_ptr->buflen] = ReadUSART();
+        uc_ptr->buflen++;
+        // check if a message should be sent
+        if (uc_ptr->buflen == MAXUARTBUF) {
+            ToMainLow_sendmsg(uc_ptr->buflen, MSGT_UART_DATA, (void *) uc_ptr->buffer);
+            uc_ptr->buflen = 0;
+        }
+    }
 #endif
-        // we've overrun the USART and must reset
+
+    //     uc_ptr->buflen++;
+    //     // check if a message should be sent
+    //     if (uc_ptr->buflen == MAXUARTBUF) {
+    //         ToMainLow_sendmsg(uc_ptr->buflen, MSGT_UART_DATA, (void *) uc_ptr->buffer);
+    //         uc_ptr->buflen = 0;
+    //     }
+    // }
+#ifdef __USE18F26J50
+        if (USART1_Status.OVERRUN_ERROR == 1) {
+                    // we've overrun the USART and must reset
         // send an error message for this
         RCSTAbits.CREN = 0;
         RCSTAbits.CREN = 1;
         ToMainLow_sendmsg(0, MSGT_OVERRUN, (void *) 0);
     }
+#else
+        if (USART_Status.OVERRUN_ERROR == 1) {
+                    // we've overrun the USART and must reset
+        // send an error message for this
+        RCSTAbits.CREN = 0;
+        RCSTAbits.CREN = 1;
+        ToMainLow_sendmsg(0, MSGT_OVERRUN, (void *) 0);
+    }
+#endif
+    //     // we've overrun the USART and must reset
+    //     // send an error message for this
+    //     RCSTAbits.CREN = 0;
+    //     RCSTAbits.CREN = 1;
+    //     ToMainLow_sendmsg(0, MSGT_OVERRUN, (void *) 0);
+    // }
 }
 
 void init_uart_snd_rcv(uart_comm *uc) {
@@ -71,17 +97,17 @@ void init_uart_snd_rcv(uart_comm *uc) {
 }
 
 
-void uart_send_int_handler(void) {
-    if (uc_ptr->outbufind < uc_ptr->outbuflen) {
-#ifdef __USE18F26J50
-        Write1USART(uc_ptr->outbuffer[uc_ptr->outbufind]);
-#else
-        TXREG = uc_ptr->outbuffer[uc_ptr->outbufind];
-#endif
-        ++uc_ptr->outbufind;
-    }
-    else { // End of message
-        PIE1bits.TXIE = 0;
-    }
-}
+// void uart_send_int_handler(void) {
+//     if (uc_ptr->outbufind < uc_ptr->outbuflen) {
+// #ifdef __USE18F26J50
+//         Write1USART(uc_ptr->outbuffer[uc_ptr->outbufind]);
+// #else
+//         TXREG = uc_ptr->outbuffer[uc_ptr->outbufind];
+// #endif
+//         ++uc_ptr->outbufind;
+//     }
+//     else { // End of message
+//         PIE1bits.TXIE = 0;
+//     }
+// }
 
