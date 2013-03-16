@@ -1,8 +1,10 @@
 #include "maindefs.h"
 #ifndef __XC8
 #include <usart.h>
+#include <timers.h>
 #else
 #include <plib/usart.h>
+#include <plib/timers.h>
 #endif
 #include "my_uart.h"
 
@@ -22,6 +24,11 @@ void start_UART_send(unsigned char len, unsigned char * msg) {
 #endif
 }
 
+void uart_rcv_msg_timeout(void) {
+    uc_ptr->buflen = 0;
+}
+
+
 void uart_recv_int_handler() {
 #ifdef __USE18F26J50
     if (DataRdy1USART()) {
@@ -30,6 +37,9 @@ void uart_recv_int_handler() {
     if (DataRdyUSART()) {
         uc_ptr->buffer[uc_ptr->buflen] = ReadUSART();
 #endif
+
+        // reset timer0
+        WriteTimer0(0);
 
         uc_ptr->buflen++;
         // check if a message should be sent

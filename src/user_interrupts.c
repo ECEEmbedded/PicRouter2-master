@@ -9,20 +9,16 @@
 #endif
 #include "user_interrupts.h"
 #include "messages.h"
+#include "my_uart.h"
 
 // A function called by the interrupt handler
 // This one does the action I wanted for this program on a timer0 interrupt
 
 void timer0_int_handler() {
-    unsigned int val;
-    int length, msgtype;
-
-    // toggle an LED
-#ifdef __USE18F2680
-    LATBbits.LATB0 = !LATBbits.LATB0;
-#endif
+    uart_rcv_msg_timeout();
+//    ToMainHigh_sendmsg(0, MSGT_TIMER0, (void *) 0);
+    
     // reset the timer
-    ToMainHigh_sendmsg(0, MSGT_TIMER0, (void *) 0);
     WriteTimer0(0);
 }
 
@@ -41,5 +37,5 @@ void timer1_int_handler() {
     ToMainLow_sendmsg(0, MSGT_TIMER1, (void *) 0);
 
     // reset the timer
-    WriteTimer1(0);
+    WriteTimer1(500); // start at 500 instead of 0 so slightly faster than generated readings on slave PIC
 }

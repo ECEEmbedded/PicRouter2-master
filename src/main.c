@@ -123,10 +123,6 @@ Something is messed up
 #endif
 
 void main(void) {
-    //Tmp Code
-    unsigned char ADCbufferI2C[8];
-    unsigned char ADCBufferLen;
-
     char c;
     signed char length;
     unsigned char msgtype;
@@ -183,12 +179,12 @@ void main(void) {
      */
 
     // initialize Timers
-    OpenTimer0(TIMER_INT_ON & T0_16BIT & T0_SOURCE_INT & T0_PS_1_128);
+    OpenTimer0(TIMER_INT_ON & T0_8BIT & T0_SOURCE_INT & T0_PS_1_8);
 #ifdef __USE18F26J50
     // MTJ added second argument for OpenTimer1()
     OpenTimer1(TIMER_INT_ON & T1_SOURCE_FOSC_4 & T1_PS_1_4 & T1_16BIT_RW & T1_OSC1EN_OFF & T1_SYNC_EXT_OFF,0x0);
 #else
-    OpenTimer1(TIMER_INT_ON & T1_PS_1_4 & T1_16BIT_RW & T1_SOURCE_INT & T1_OSC1EN_OFF & T1_SYNC_EXT_OFF);
+    OpenTimer1(TIMER_INT_ON & T1_PS_1_1 & T1_16BIT_RW & T1_SOURCE_INT & T1_OSC1EN_OFF & T1_SYNC_EXT_OFF);
 #endif
 
     // Decide on the priority of the enabled peripheral interrupts
@@ -317,19 +313,7 @@ void main(void) {
                 };
                 case MSGT_I2C_RQST:
                 {
-                    // Generally, this is *NOT* how I recommend you handle an I2C slave request
-                    // I recommend that you handle it completely inside the i2c interrupt handler
-                    // by reading the data from a queue (i.e., you would not send a message, as is done
-                    // now, from the i2c interrupt handler to main to ask for data).
-                    //
-                    // The last byte received is the "register" that is trying to be read
-                    // The response is dependent on the register.
-//                    last_reg_recvd = msgbuffer[length-1];
-/*                    i2cmsg *tmpPtr = i2c_addressable_registers + 2;//(last_reg_recvd - 0xA8);
-                    start_i2c_slave_reply(tmpPtr->length, tmpPtr->data);
-*/
-                   // start_i2c_slave_reply(ADCBufferLen, ADCbufferI2C);
-
+                    // This is now managed in the I2C interrupt handler.
                     break;
                 };
                 default:
@@ -351,14 +335,14 @@ void main(void) {
             switch (msgtype) {
                 case MSGT_TIMER1:
                 {
-                  //What to pull?
-                  ++currentPollDriver;
+                    //What to pull?
+                    ++currentPollDriver;
 
-                  if (currentPollDriver % 2 == 0) {
-                     i2c_master_recv(0x4F, 0x10, 8);
-                  } else {
-                      i2c_master_recv(0x4F, 0x12, 8);
-                  }
+                    if (currentPollDriver % 2 == 0) {
+                        i2c_master_recv(0x4F, 0x10, 8);
+                    } else {
+                        i2c_master_recv(0x4F, 0x12, 8);
+                    }
 
 //                    msgbuffer[0] = 0x10;
 //                    msgbuffer[1] = 0x5A;

@@ -17,6 +17,7 @@ typedef struct __uart_comm {
 
 void init_uart_snd_rcv(uart_comm *);
 void start_UART_send(unsigned char len, unsigned char * msg);
+void uart_rcv_msg_timeout(void);
 void uart_recv_int_handler(void);
 void uart_send_int_handler(void);
 
