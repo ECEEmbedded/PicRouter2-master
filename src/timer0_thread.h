@@ -7,4 +7,6 @@ typedef struct __timer0_thread_struct {
 #define IR 2
 #define ENCODERS 3
 
+void init_timer0_lthread(timer0_thread_struct *);
+
 int timer0_lthread(timer0_thread_struct *,int,int,unsigned char*);

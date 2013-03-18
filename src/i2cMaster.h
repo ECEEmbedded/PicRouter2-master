@@ -1,4 +1,4 @@
-#ifndef I2C_MASTER_H_
+/*#ifndef I2C_MASTER_H_
 #define I2C_MASTER_H_
 
 #include "maindefs.h"
@@ -26,3 +26,4 @@ unsigned char i2c_master_recv(unsigned char ID, unsigned char adr, unsigned char
 void i2c_master_int_handler();
 
 #endif
+*/

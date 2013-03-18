@@ -2,6 +2,9 @@
 #include "interrupts.h"
 #include "user_interrupts.h"
 #include "messages.h"
+#include "my_uart.h"
+#include <plib/portb.h>
+#include <plib/timers.h>
 
 //----------------------------------------------------------------------------
 // Note: This code for processing interrupts is configured to allow for high and

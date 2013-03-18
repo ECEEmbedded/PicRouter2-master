@@ -1,4 +1,4 @@
-#include maindefs.h
+#include "maindefs.h"
 #ifndef __XC8
 #include <usart.h>
 #else
@@ -97,17 +97,17 @@ void init_uart_snd_rcv(uart_comm *uc) {
 }
 
 
-// void uart_send_int_handler(void) {
-//     if (uc_ptr->outbufind < uc_ptr->outbuflen) {
-// #ifdef __USE18F26J50
-//         Write1USART(uc_ptr->outbuffer[uc_ptr->outbufind]);
-// #else
-//         TXREG = uc_ptr->outbuffer[uc_ptr->outbufind];
-// #endif
-//         ++uc_ptr->outbufind;
-//     }
-//     else { // End of message
-//         PIE1bits.TXIE = 0;
-//     }
-// }
+void uart_send_int_handler(void) {
+    if (uc_ptr->outbufind < uc_ptr->outbuflen) {
+#ifdef __USE18F26J50
+        Write1USART(uc_ptr->outbuffer[uc_ptr->outbufind]);
+#else
+        TXREG = uc_ptr->outbuffer[uc_ptr->outbufind];
+#endif
+        ++uc_ptr->outbufind;
+    }
+    else { // End of message
+        PIE1bits.TXIE = 0;
+    }
+}
 

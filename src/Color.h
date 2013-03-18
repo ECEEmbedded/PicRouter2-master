@@ -1,17 +1,19 @@
 #ifndef __Color_H_
 #define __Color_H_
 
+#include "maindefs.h"
+
     typedef struct DRIVERColorMEMBERS {
         unsigned char id;
         unsigned char class;
-  
+
 
     unsigned char a;
 
 } DriverColorMembers;
 
     typedef struct DRIVERColorDATA {
-  
+
 
   unsigned char input;
 
@@ -34,7 +36,9 @@ void DriverColorPoll(Driver_t *driver) {
 DriverColorMembers *self = (DriverColorMembers *)driver;
 
     //DebugPrint(self->id);
-    i2c_master_recv(self->id, 0x10, 8);
+    //i2c_master_recv(self->id, 0x10, 8);   // (id, adr, length)
+    i2c_master_recv(COLOR_MSG_TYPE, 8);
+                                          // my code (Matthew Ibarra) has this as (command, length)
 
 }
 
@@ -49,5 +53,5 @@ DriverColorMembers *self = (DriverColorMembers *)driver;
 
       DriverColorInit(context);
     }
-  
+
 #endif __Color_H_

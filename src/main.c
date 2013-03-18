@@ -12,12 +12,13 @@
 #include "interrupts.h"
 #include "messages.h"
 #include "my_uart.h"
-//#include "my_i2c.h"
+#include "my_i2c.h"
 #include "uart_thread.h"
 #include "timer1_thread.h"
 #include "timer0_thread.h"
-#include "i2cMaster.h"
-#include "drivers.h"
+#include "user_interrupts.h"
+//#include "i2cMaster.h"
+//#include "drivers.h"
 
 #ifdef __USE18F45J10
 // CONFIG1L
@@ -300,8 +301,8 @@ void main(void) {
 //    OpenI2C(MASTER, SLEW_OFF);
 
     //Load Drivers
-    DriverColorAdd(0x4F);
-    DriverColorAdd(0x4F);
+    //DriverColorAdd(0x4F);
+    //DriverColorAdd(0x4F);
    // DriverIRAdd(0x49);
 
     static int currentPollDriver = 0;

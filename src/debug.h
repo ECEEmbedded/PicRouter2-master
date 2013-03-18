@@ -1,11 +1,11 @@
 #ifndef DEBUG_H_
 #define DEBUG_H_
 
-#include <stdio.h>
-#include <plib/usart.h>
-#include <plib/i2c.h>
-#include <plib/timers.h>
-#include "maindefs.h"
+// #include <stdio.h>
+// #include <plib/usart.h>
+// #include <plib/i2c.h>
+// #include <plib/timers.h>
+// #include "maindefs.h"
 
 /*
  * ##################################################

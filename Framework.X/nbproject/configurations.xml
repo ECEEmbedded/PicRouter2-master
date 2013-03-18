@@ -16,6 +16,7 @@
       <itemPath>../src/router.h</itemPath>
       <itemPath>../src/debug.h</itemPath>
       <itemPath>../src/i2cMaster.h</itemPath>
+      <itemPath>../src/Color.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -27,7 +28,6 @@
       <logicalFolder name="f1" displayName="Drivers" projectFiles="true">
         <itemPath>../src/Drivers/Color.rb</itemPath>
         <itemPath>../src/Drivers/IR.rb</itemPath>
-        <itemPath>../src/Drivers/Motor.rb</itemPath>
       </logicalFolder>
       <itemPath>../src/interrupts.c</itemPath>
       <itemPath>../src/main.c</itemPath>
@@ -62,7 +62,7 @@
         <platformTool>PICkit2PlatformTool</platformTool>
         <languageToolchain>XC8</languageToolchain>
         <languageToolchainVersion>1.12</languageToolchainVersion>
-        <platform>3</platform>
+        <platform>4</platform>
       </toolsSet>
       <compileType>
         <linkerTool>
@@ -161,7 +161,7 @@
         <platformTool>PICkit3PlatformTool</platformTool>
         <languageToolchain>XC8</languageToolchain>
         <languageToolchainVersion>1.12</languageToolchainVersion>
-        <platform>3</platform>
+        <platform>4</platform>
       </toolsSet>
       <compileType>
         <linkerTool>

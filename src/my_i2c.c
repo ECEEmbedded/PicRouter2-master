@@ -5,6 +5,8 @@
 #include <plib/i2c.h>
 #endif
 #include "my_i2c.h"
+#include "my_uart.h"
+#include "user_interrupts.h"
 
 static i2c_comm *ic_ptr;
 
@@ -111,6 +113,7 @@ unsigned char i2c_master_recv(unsigned char command, unsigned char length) {
 
     ic_ptr->buflen = length;
     ic_ptr->bufind = 0;
+
 
     ic_ptr->outbuflen = 1;
     ic_ptr->outbuffer[0] = command;
@@ -470,7 +473,7 @@ void i2c_slave_int_handler() {
 #endif
 #ifdef __MOTOR2680
         if(ic_ptr->buffer[0] == 0xBB){
-            uart_send(ic_ptr->buflen - 2, ic_ptr->buffer + 2);
+            start_UART_send(ic_ptr->buflen - 2, ic_ptr->buffer + 2);
         }
 #endif
     } else if (ic_ptr->error_count >= I2C_ERR_THRESHOLD) {

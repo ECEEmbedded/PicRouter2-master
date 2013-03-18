@@ -7,6 +7,7 @@
 typedef struct __i2c_comm {
 	unsigned char buffer[MAXI2CBUF];
 	unsigned char	buflen;
+    unsigned char   bufind;
 	unsigned char	event_count;
 	unsigned char	status;
 	unsigned char	error_code;

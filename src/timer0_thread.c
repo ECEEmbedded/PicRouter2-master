@@ -1,6 +1,9 @@
 #include "maindefs.h"
 #include <stdio.h>
 #include "timer0_thread.h"
+#include "messages.h"
+#include "my_i2c.h"
+#include "user_interrupts.h"
 
 // This is a "logical" thread that processes messages from TIMER0
 // It is not a "real" thread because there is only the single main thread
@@ -18,7 +21,7 @@ void init_timer0_lthread(timer0_thread_struct *tptr){
 #endif
 
     sensorToPoll = COLOR;
-    sonarMsgCount = 0;
+    colorSensorMsgCount = 0;
 }
 
 int timer0_lthread(timer0_thread_struct *tptr, int msgtype, int length, unsigned char *msgbuffer) {
@@ -72,7 +75,4 @@ int timer0_lthread(timer0_thread_struct *tptr, int msgtype, int length, unsigned
 #ifdef __MOTOR2680
     encoder_int_handler();
 #endif
-}
-
-
 }
