@@ -344,7 +344,8 @@ void main(void) {
                     } else if (currentPollDriver % 3 == 2) { // Encoders
                         //i2c_master_recv(0x4F, 8);
                     } else if (currentPollDriver % 3 == 3) { // Color
-                        i2c_master_request_reg(/*color adr, reg1 adr, 1*/);
+                        i2c_master_request_reg(0,1,1/*color adr, reg1 adr, length (probably 1)*/);
+                        i2c_master_request_reg(0,2,1/*color adr, reg2 adr, length (probably 1)*/);
                     }
 
 //                    msgbuffer[0] = 0x10;

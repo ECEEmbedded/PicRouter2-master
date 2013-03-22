@@ -23,6 +23,8 @@ typedef struct __i2c_master_comm {
 
 static i2c_master_comm i2c_p;
 
+void i2c_master_start_next_in_Q(void);
+
 // Sending in I2C Master mode [slave write]
 // 		returns -1 if the i2c bus is busy
 // 		return 0 otherwise
@@ -40,10 +42,12 @@ unsigned char i2c_master_send(unsigned char adr, unsigned char length, unsigned 
     msgbuf[0] = (adr << 1);
     int i;
     for (i = 0; i < length; ++i) {
-        i2c_p.buffer[i2c_p.buflen + 1] = msg[i2c_p.buflen];
+        msgbuf[i+1] = msg[i];
     }
-    FromMainHigh_sendmsg(length, MSGT_I2C_MASTER_SEND, msgbuf);
+    FromMainHigh_sendmsg(length+1, MSGT_I2C_MASTER_SEND, msgbuf);
+
     i2c_master_start_next_in_Q();
+
     return 0;
 }
 
@@ -61,46 +65,37 @@ unsigned char i2c_master_send(unsigned char adr, unsigned char length, unsigned 
 // The interrupt handler will be responsible for copying the message received into
 
 unsigned char i2c_master_recv(unsigned char ID, unsigned char length) {
-    if (i2c_p.status != I2C_FREE) {
-        return 1;
-    }   
-    
-    i2c_p.buffind = 0;
-    i2c_p.buflen = length;
+    unsigned char buf[2];
+    buf[0] = (ID << 1)  | 0x01;
+    buf[1] = length;
+    FromMainHigh_sendmsg(2,MSGT_I2C_MASTER_RECV,buf);
 
-    i2c_p.buffer[0] = (ID << 1)  | 0x01;
-    
-    i2c_p.status = I2C_REQUESTING_REG;
-    SEN = 1;
+    i2c_master_start_next_in_Q();
 
     return(0);
 }
 
 unsigned char i2c_master_request_reg(unsigned char ID, unsigned char adr, unsigned char length) {
-    if (i2c_p.status != I2C_FREE) {
-        return -1;
-    }
+    unsigned char buf[3];
+    buf[0] = (ID << 1)  | 0x01;
+    buf[1] = adr;
+    buf[2] = length;
+    FromMainHigh_sendmsg(3,MSGT_I2C_MASTER_REQUEST_REG,buf);
 
-    i2c_p.buffind = 0;
-    i2c_p.buflen = length;
-
-    i2c_p.buffer[0] = (ID << 1)  | 0x01;
-    i2c_p.buffer[1] = adr;
-
-    i2c_p.status = I2C_REQUESTING;
-    SEN = 1;
+    i2c_master_start_next_in_Q();
 
     return(0);
 }
-// private function
-void i2c_master_start_next_in_Q(void) {
-    if (i2c_p.status != I2C_FREE)
-        return;
 
+// private function
+void i2c_master_start_next_in_Q() {
+    if (i2c_p.status != I2C_FREE) {
+        return;
+    }
     unsigned char msgType;
-    
-    unsigned char i2c_p.buflen = FromMainHigh_recvmsg(MSGLEN, &msgType, i2c_p.buffer);
-    
+
+    i2c_p.buflen = FromMainHigh_recvmsg(MSGLEN, &msgType, i2c_p.buffer);
+
     if (msgType == MSGT_I2C_MASTER_SEND) {
         i2c_p.buffind = 1;
         SEN = 1;
@@ -109,12 +104,19 @@ void i2c_master_start_next_in_Q(void) {
         i2c_p.status = I2C_SENDING;
     }
     else if (msgType == MSGT_I2C_MASTER_RECV) {
-        
+        i2c_p.buffind = 0;
+        i2c_p.buflen = i2c_p.buffer[1];
+        i2c_p.status = I2C_REQUESTING;
+        SEN = 1;
     }
     else if (msgType == MSGT_I2C_MASTER_REQUEST_REG) {
-        
+        i2c_p.buffind = 0;
+        i2c_p.buflen = i2c_p.buffer[2];
+        i2c_p.status = I2C_REQUESTING_REG;
+        SEN = 1;
     }
 }
+
 
 void i2c_master_int_handler() {
     switch (i2c_p.status) {
@@ -150,7 +152,7 @@ void i2c_master_int_handler() {
             break;
         }
         case I2C_REQUESTING_REG: {
-            if (i2c_p.buffind == 2) {
+            if (i2c_p.buffind >= 2) {
                 SSPBUF = i2c_p.buffer[i2c_p.buffind++];
             }
             else {

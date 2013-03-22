@@ -34,7 +34,7 @@ void DriverColorPoll(Driver_t *driver) {
 DriverColorMembers *self = (DriverColorMembers *)driver;
 
     //DebugPrint(self->id);
-    i2c_master_recv(self->id, 0x10, 8);
+    i2c_master_recv(self->id, 8);
 
 }
 
