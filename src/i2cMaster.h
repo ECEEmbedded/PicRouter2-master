@@ -22,7 +22,8 @@ void I2CWriteRequest(unsigned char id, unsigned char registerAddress, unsigned c
 
 void i2c_configure_master(unsigned char);
 unsigned char i2c_master_send(unsigned char adr, unsigned char,unsigned char *);
-unsigned char i2c_master_recv(unsigned char ID, unsigned char adr, unsigned char);
+unsigned char i2c_master_recv(unsigned char ID, unsigned char);
+unsigned char i2c_master_request_reg(unsigned char ID, unsigned char adr, unsigned char length);
 void i2c_master_int_handler();
 
 #endif

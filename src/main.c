@@ -338,10 +338,13 @@ void main(void) {
                     //What to pull?
                     ++currentPollDriver;
 
-                    if (currentPollDriver % 2 == 0) {
-                        i2c_master_recv(0x4F, 0x10, 8);
-                    } else {
-                        i2c_master_recv(0x4F, 0x12, 8);
+                    // add queue to make this section better
+                    if (currentPollDriver % 3 == 0) { // IR
+                        i2c_master_recv(0x4F, 8);
+                    } else if (currentPollDriver % 3 == 2) { // Encoders
+                        //i2c_master_recv(0x4F, 8);
+                    } else if (currentPollDriver % 3 == 3) { // Color
+                        i2c_master_request_reg(/*color adr, reg1 adr, 1*/);
                     }
 
 //                    msgbuffer[0] = 0x10;

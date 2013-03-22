@@ -7,6 +7,7 @@ enum {
     I2C_SENDING,
     I2C_REQUESTING,
     I2C_RECEIVING,
+    I2C_REQUESTING_REG,
     I2C_ACKNOWLEDGE
 };
 
@@ -35,23 +36,19 @@ static i2c_master_comm i2c_p;
 //   the structure to which ic_ptr points [there is already a suitable buffer there].
 
 unsigned char i2c_master_send(unsigned char adr, unsigned char length, unsigned char *msg) {
-    if (i2c_p.status != I2C_FREE)
-        return -1;
-
-    for (i2c_p.buflen = 0; i2c_p.buflen < length; ++i2c_p.buflen) {
-        i2c_p.buffer[i2c_p.buflen] = msg[i2c_p.buflen];
+    unsigned char msgbuf[MSGLEN];
+    msgbuf[0] = (adr << 1);
+    int i;
+    for (i = 0; i < length; ++i) {
+        i2c_p.buffer[i2c_p.buflen + 1] = msg[i2c_p.buflen];
     }
-
-    i2c_p.buffind = 0;
-    SEN = 1;
-    SSPIF = 1;
-    SSPBUF = (adr << 1);
-    i2c_p.status = I2C_SENDING;
-    return(0);
+    FromMainHigh_sendmsg(length, MSGT_I2C_MASTER_SEND, msgbuf);
+    i2c_master_start_next_in_Q();
+    return 0;
 }
 
 // Receiving in I2C Master mode [slave read]
-// 		returns -1 if the i2c bus is busy
+// 		returns 1 if the i2c bus is busy
 // 		return 0 otherwise
 // Will start the receiving of an i2c message -- interrupt handler will take care of
 //   completing the i2c message receive.  When the receive is complete (or has failed)
@@ -63,19 +60,60 @@ unsigned char i2c_master_send(unsigned char adr, unsigned char length, unsigned 
 //   is determined by the parameter passed to i2c_master_recv()].
 // The interrupt handler will be responsible for copying the message received into
 
-unsigned char i2c_master_recv(unsigned char ID, unsigned char adr, unsigned char length) {
-    if (i2c_p.status != I2C_FREE)
-        return -1;
-        
+unsigned char i2c_master_recv(unsigned char ID, unsigned char length) {
+    if (i2c_p.status != I2C_FREE) {
+        return 1;
+    }   
+    
     i2c_p.buffind = 0;
     i2c_p.buflen = length;
 
     i2c_p.buffer[0] = (ID << 1)  | 0x01;
     
+    i2c_p.status = I2C_REQUESTING_REG;
+    SEN = 1;
+
+    return(0);
+}
+
+unsigned char i2c_master_request_reg(unsigned char ID, unsigned char adr, unsigned char length) {
+    if (i2c_p.status != I2C_FREE) {
+        return -1;
+    }
+
+    i2c_p.buffind = 0;
+    i2c_p.buflen = length;
+
+    i2c_p.buffer[0] = (ID << 1)  | 0x01;
+    i2c_p.buffer[1] = adr;
+
     i2c_p.status = I2C_REQUESTING;
     SEN = 1;
 
     return(0);
+}
+// private function
+void i2c_master_start_next_in_Q(void) {
+    if (i2c_p.status != I2C_FREE)
+        return;
+
+    unsigned char msgType;
+    
+    unsigned char i2c_p.buflen = FromMainHigh_recvmsg(MSGLEN, &msgType, i2c_p.buffer);
+    
+    if (msgType == MSGT_I2C_MASTER_SEND) {
+        i2c_p.buffind = 1;
+        SEN = 1;
+        SSPIF = 1;
+        SSPBUF = i2c_p.buffer[0];
+        i2c_p.status = I2C_SENDING;
+    }
+    else if (msgType == MSGT_I2C_MASTER_RECV) {
+        
+    }
+    else if (msgType == MSGT_I2C_MASTER_REQUEST_REG) {
+        
+    }
 }
 
 void i2c_master_int_handler() {
@@ -108,6 +146,17 @@ void i2c_master_int_handler() {
                 PEN = 1;
 
                 ToMainHigh_sendmsg(i2c_p.buflen, MSGT_I2C_DATA, i2c_p.buffer);
+            }
+            break;
+        }
+        case I2C_REQUESTING_REG: {
+            if (i2c_p.buffind == 2) {
+                SSPBUF = i2c_p.buffer[i2c_p.buffind++];
+            }
+            else {
+                i2c_p.buffind = 0;
+                i2c_p.status = I2C_RECEIVING;
+                RSEN = 1;
             }
             break;
         }
