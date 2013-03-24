@@ -18788,7 +18788,6 @@ void InterruptHandlerHigh() {
 
 
 
-
 if (PIR1bits.SSPIF) {
 
 PIR1bits.SSPIF = 0;
@@ -18803,14 +18802,14 @@ INTCONbits.TMR0IF = 0;
 timer0_int_handler();
 }
 
-# 115
+# 113
 SleepIfOkay();
 }
 
-# 123
+# 121
 interrupt low_priority
 
-# 128
+# 126
 void InterruptHandlerLow() {
 
 if (PIR1bits.TMR1IF) {

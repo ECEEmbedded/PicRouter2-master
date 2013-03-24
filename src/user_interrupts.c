@@ -29,11 +29,11 @@ void timer1_int_handler() {
     unsigned int result;
 
     // read the timer and then send an empty message to main()
-#ifdef __USE18F2680
-    LATBbits.LATB1 = !LATBbits.LATB1;
-#endif
+//#ifdef __USE18F2680
+//    LATBbits.LATB1 = !LATBbits.LATB1;
+//#endif
 
-    result = ReadTimer1();
+//    result = ReadTimer1();
     ToMainLow_sendmsg(0, MSGT_TIMER1, (void *) 0);
 
     // reset the timer

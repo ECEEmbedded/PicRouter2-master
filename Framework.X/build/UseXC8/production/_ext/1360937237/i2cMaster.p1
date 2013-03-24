@@ -3,10 +3,12 @@ Version 3.2 HI-TECH Software Intermediate Code
 [n S2091 __i2c_master_comm buffer buflen buffind event_count status error_code error_count ]
 "78 ../src/messages.h
 [v _FromMainHigh_sendmsg `(c ~T0 @X0 0 ef3`uc`uc`*v ]
-"26 ../src/i2cMaster.c
+"27 ../src/i2cMaster.c
 [v _i2c_master_start_next_in_Q `(v ~T0 @X0 0 ef ]
-[c E16385 0 1 2 3 4 5 .. ]
-[n E16385 . I2C_FREE I2C_SENDING I2C_REQUESTING I2C_RECEIVING I2C_REQUESTING_REG I2C_ACKNOWLEDGE  ]
+"16 ../src/debug.h
+[v _DebugPrint `(v ~T0 @X0 0 ef1`uc ]
+[c E16388 0 1 2 3 4 5 .. ]
+[n E16388 . I2C_FREE I2C_SENDING I2C_REQUESTING I2C_RECEIVING I2C_REQUESTING_REG I2C_ACKNOWLEDGE  ]
 "79 ../src/messages.h
 [v _FromMainHigh_recvmsg `(c ~T0 @X0 0 ef3`uc`*uc`*v ]
 "37991 C:\Program Files (x86)\Microchip\xc8\v1.12\include\pic18f2680.h
@@ -14838,468 +14840,491 @@ Version 3.2 HI-TECH Software Intermediate Code
 [; ;my_i2c.h: 33: void i2c_int_handler(void);
 [; ;my_i2c.h: 34: void start_i2c_slave_reply(unsigned char,unsigned char *);
 [; ;my_i2c.h: 35: void i2c_configure_slave(unsigned char);
-[; ;i2cMaster.c: 5: enum {
-[; ;i2cMaster.c: 6: I2C_FREE,
-[; ;i2cMaster.c: 7: I2C_SENDING,
-[; ;i2cMaster.c: 8: I2C_REQUESTING,
-[; ;i2cMaster.c: 9: I2C_RECEIVING,
-[; ;i2cMaster.c: 10: I2C_REQUESTING_REG,
-[; ;i2cMaster.c: 11: I2C_ACKNOWLEDGE
-[; ;i2cMaster.c: 12: };
-[; ;i2cMaster.c: 14: typedef struct __i2c_master_comm {
-[; ;i2cMaster.c: 15: unsigned char buffer[10];
-[; ;i2cMaster.c: 16: unsigned char buflen;
-[; ;i2cMaster.c: 17: unsigned char buffind;
-[; ;i2cMaster.c: 18: unsigned char event_count;
-[; ;i2cMaster.c: 19: unsigned char status;
-[; ;i2cMaster.c: 20: unsigned char error_code;
-[; ;i2cMaster.c: 21: unsigned char error_count;
-[; ;i2cMaster.c: 22: } i2c_master_comm;
-"24 ../src/i2cMaster.c
+[; ;debug.h: 16: void DebugPrint(unsigned char out);
+[; ;debug.h: 24: void DebugSignal();
+[; ;i2cMaster.c: 6: enum {
+[; ;i2cMaster.c: 7: I2C_FREE,
+[; ;i2cMaster.c: 8: I2C_SENDING,
+[; ;i2cMaster.c: 9: I2C_REQUESTING,
+[; ;i2cMaster.c: 10: I2C_RECEIVING,
+[; ;i2cMaster.c: 11: I2C_REQUESTING_REG,
+[; ;i2cMaster.c: 12: I2C_ACKNOWLEDGE
+[; ;i2cMaster.c: 13: };
+[; ;i2cMaster.c: 15: typedef struct __i2c_master_comm {
+[; ;i2cMaster.c: 16: unsigned char buffer[10];
+[; ;i2cMaster.c: 17: unsigned char buflen;
+[; ;i2cMaster.c: 18: unsigned char buffind;
+[; ;i2cMaster.c: 19: unsigned char event_count;
+[; ;i2cMaster.c: 20: unsigned char status;
+[; ;i2cMaster.c: 21: unsigned char error_code;
+[; ;i2cMaster.c: 22: unsigned char error_count;
+[; ;i2cMaster.c: 23: } i2c_master_comm;
+"25 ../src/i2cMaster.c
 [v _i2c_p `S2091 ~T0 @X0 1 s ]
-[; ;i2cMaster.c: 24: static i2c_master_comm i2c_p;
-[; ;i2cMaster.c: 26: void i2c_master_start_next_in_Q(void);
-"40
+[; ;i2cMaster.c: 25: static i2c_master_comm i2c_p;
+[; ;i2cMaster.c: 27: void i2c_master_start_next_in_Q(void);
+"41
 [v _i2c_master_send `(uc ~T0 @X0 1 ef3`uc`uc`*uc ]
 {
-[; ;i2cMaster.c: 40: unsigned char i2c_master_send(unsigned char adr, unsigned char length, unsigned char *msg) {
+[; ;i2cMaster.c: 41: unsigned char i2c_master_send(unsigned char adr, unsigned char length, unsigned char *msg) {
 [e :U _i2c_master_send ]
 [v _adr `uc ~T0 @X0 1 r1 ]
 [v _length `uc ~T0 @X0 1 r2 ]
 [v _msg `*uc ~T0 @X0 1 r3 ]
 [f ]
-"41
-[v _msgbuf `uc ~T0 @X0 -> 10 `i a ]
-[; ;i2cMaster.c: 41: unsigned char msgbuf[10];
-[; ;i2cMaster.c: 42: msgbuf[0] = (adr << 1);
 "42
-[e = *U + &U _msgbuf * -> -> -> 0 `i `ui `ux -> -> # *U &U _msgbuf `ui `ux -> << -> _adr `i -> 1 `i `uc ]
+[v _msgbuf `uc ~T0 @X0 -> 10 `i a ]
+[; ;i2cMaster.c: 42: unsigned char msgbuf[10];
+[; ;i2cMaster.c: 43: msgbuf[0] = (adr << 1);
 "43
-[v _i `i ~T0 @X0 1 a ]
-[; ;i2cMaster.c: 43: int i;
-[; ;i2cMaster.c: 44: for (i = 0; i < length; ++i) {
+[e = *U + &U _msgbuf * -> -> -> 0 `i `ui `ux -> -> # *U &U _msgbuf `ui `ux -> << -> _adr `i -> 1 `i `uc ]
 "44
+[v _i `i ~T0 @X0 1 a ]
+[; ;i2cMaster.c: 44: int i;
+[; ;i2cMaster.c: 45: for (i = 0; i < length; ++i) {
+"45
 {
 [e = _i -> 0 `i ]
 [e $U 2096  ]
 [e :U 2093 ]
 {
-[; ;i2cMaster.c: 45: msgbuf[i+1] = msg[i];
-"45
-[e = *U + &U _msgbuf * -> -> + _i -> 1 `i `ui `ux -> -> # *U &U _msgbuf `ui `ux *U + _msg * -> _i `x -> -> # *U _msg `i `x ]
+[; ;i2cMaster.c: 46: msgbuf[i+1] = msg[i];
 "46
+[e = *U + &U _msgbuf * -> -> + _i -> 1 `i `ui `ux -> -> # *U &U _msgbuf `ui `ux *U + _msg * -> _i `x -> -> # *U _msg `i `x ]
+"47
 }
-"44
+"45
 [e =+ _i -> 1 `i ]
 [e :U 2096 ]
 [e $ < _i -> _length `i 2093  ]
 [e :U 2094 ]
-"46
-}
-[; ;i2cMaster.c: 46: }
-[; ;i2cMaster.c: 47: FromMainHigh_sendmsg(length+1, 47, msgbuf);
 "47
+}
+[; ;i2cMaster.c: 47: }
+[; ;i2cMaster.c: 48: FromMainHigh_sendmsg(length+1, 47, msgbuf);
+"48
 [e ( _FromMainHigh_sendmsg (3 , , -> + -> _length `i -> 1 `i `uc -> -> 47 `i `uc -> &U _msgbuf `*v ]
-[; ;i2cMaster.c: 49: i2c_master_start_next_in_Q();
-"49
+[; ;i2cMaster.c: 50: i2c_master_start_next_in_Q();
+"50
 [e ( _i2c_master_start_next_in_Q ..  ]
-[; ;i2cMaster.c: 51: return 0;
-"51
+[; ;i2cMaster.c: 52: return 0;
+"52
 [e ) -> -> 0 `i `uc ]
 [e $UE 2092  ]
-[; ;i2cMaster.c: 52: }
-"52
+[; ;i2cMaster.c: 53: }
+"53
 [e :UE 2092 ]
 }
-"67
+"68
 [v _i2c_master_recv `(uc ~T0 @X0 1 ef2`uc`uc ]
 {
-[; ;i2cMaster.c: 67: unsigned char i2c_master_recv(unsigned char ID, unsigned char length) {
+[; ;i2cMaster.c: 68: unsigned char i2c_master_recv(unsigned char ID, unsigned char length) {
 [e :U _i2c_master_recv ]
 [v _ID `uc ~T0 @X0 1 r1 ]
 [v _length `uc ~T0 @X0 1 r2 ]
 [f ]
-"68
-[v _buf `uc ~T0 @X0 -> 2 `i a ]
-[; ;i2cMaster.c: 68: unsigned char buf[2];
-[; ;i2cMaster.c: 69: buf[0] = (ID << 1) | 0x01;
 "69
-[e = *U + &U _buf * -> -> -> 0 `i `ui `ux -> -> # *U &U _buf `ui `ux -> | << -> _ID `i -> 1 `i -> 1 `i `uc ]
-[; ;i2cMaster.c: 70: buf[1] = length;
+[v _buf `uc ~T0 @X0 -> 2 `i a ]
+[; ;i2cMaster.c: 69: unsigned char buf[2];
+[; ;i2cMaster.c: 70: buf[0] = (ID << 1) | 0x01;
 "70
-[e = *U + &U _buf * -> -> -> 1 `i `ui `ux -> -> # *U &U _buf `ui `ux _length ]
-[; ;i2cMaster.c: 71: FromMainHigh_sendmsg(2,48,buf);
+[e = *U + &U _buf * -> -> -> 0 `i `ui `ux -> -> # *U &U _buf `ui `ux -> | << -> _ID `i -> 1 `i -> 1 `i `uc ]
+[; ;i2cMaster.c: 71: buf[1] = length;
 "71
+[e = *U + &U _buf * -> -> -> 1 `i `ui `ux -> -> # *U &U _buf `ui `ux _length ]
+[; ;i2cMaster.c: 72: FromMainHigh_sendmsg(2,48,buf);
+"72
 [e ( _FromMainHigh_sendmsg (3 , , -> -> 2 `i `uc -> -> 48 `i `uc -> &U _buf `*v ]
-[; ;i2cMaster.c: 73: i2c_master_start_next_in_Q();
-"73
+[; ;i2cMaster.c: 74: i2c_master_start_next_in_Q();
+"74
 [e ( _i2c_master_start_next_in_Q ..  ]
-[; ;i2cMaster.c: 75: return(0);
-"75
+[; ;i2cMaster.c: 76: return(0);
+"76
 [e ) -> -> 0 `i `uc ]
 [e $UE 2097  ]
-[; ;i2cMaster.c: 76: }
-"76
+[; ;i2cMaster.c: 77: }
+"77
 [e :UE 2097 ]
 }
-"78
+"79
 [v _i2c_master_request_reg `(uc ~T0 @X0 1 ef3`uc`uc`uc ]
 {
-[; ;i2cMaster.c: 78: unsigned char i2c_master_request_reg(unsigned char ID, unsigned char adr, unsigned char length) {
+[; ;i2cMaster.c: 79: unsigned char i2c_master_request_reg(unsigned char ID, unsigned char adr, unsigned char length) {
 [e :U _i2c_master_request_reg ]
 [v _ID `uc ~T0 @X0 1 r1 ]
 [v _adr `uc ~T0 @X0 1 r2 ]
 [v _length `uc ~T0 @X0 1 r3 ]
 [f ]
-"79
-[v _buf `uc ~T0 @X0 -> 3 `i a ]
-[; ;i2cMaster.c: 79: unsigned char buf[3];
-[; ;i2cMaster.c: 80: buf[0] = (ID << 1) | 0x01;
+[; ;i2cMaster.c: 80: DebugPrint(0x02);
 "80
-[e = *U + &U _buf * -> -> -> 0 `i `ui `ux -> -> # *U &U _buf `ui `ux -> | << -> _ID `i -> 1 `i -> 1 `i `uc ]
-[; ;i2cMaster.c: 81: buf[1] = adr;
+[e ( _DebugPrint (1 -> -> 2 `i `uc ]
 "81
-[e = *U + &U _buf * -> -> -> 1 `i `ui `ux -> -> # *U &U _buf `ui `ux _adr ]
-[; ;i2cMaster.c: 82: buf[2] = length;
+[v _buf `uc ~T0 @X0 -> 3 `i a ]
+[; ;i2cMaster.c: 81: unsigned char buf[3];
+[; ;i2cMaster.c: 82: buf[0] = (ID << 1) | 0x01;
 "82
-[e = *U + &U _buf * -> -> -> 2 `i `ui `ux -> -> # *U &U _buf `ui `ux _length ]
-[; ;i2cMaster.c: 83: FromMainHigh_sendmsg(3,49,buf);
+[e = *U + &U _buf * -> -> -> 0 `i `ui `ux -> -> # *U &U _buf `ui `ux -> | << -> _ID `i -> 1 `i -> 1 `i `uc ]
+[; ;i2cMaster.c: 83: buf[1] = adr;
 "83
-[e ( _FromMainHigh_sendmsg (3 , , -> -> 3 `i `uc -> -> 49 `i `uc -> &U _buf `*v ]
-[; ;i2cMaster.c: 85: i2c_master_start_next_in_Q();
+[e = *U + &U _buf * -> -> -> 1 `i `ui `ux -> -> # *U &U _buf `ui `ux _adr ]
+[; ;i2cMaster.c: 84: buf[2] = length;
+"84
+[e = *U + &U _buf * -> -> -> 2 `i `ui `ux -> -> # *U &U _buf `ui `ux _length ]
+[; ;i2cMaster.c: 85: FromMainHigh_sendmsg(3,49,buf);
 "85
+[e ( _FromMainHigh_sendmsg (3 , , -> -> 3 `i `uc -> -> 49 `i `uc -> &U _buf `*v ]
+[; ;i2cMaster.c: 86: i2c_master_start_next_in_Q();
+"86
 [e ( _i2c_master_start_next_in_Q ..  ]
-[; ;i2cMaster.c: 87: return(0);
-"87
+[; ;i2cMaster.c: 88: return(0);
+"88
 [e ) -> -> 0 `i `uc ]
 [e $UE 2098  ]
-[; ;i2cMaster.c: 88: }
-"88
+[; ;i2cMaster.c: 89: }
+"89
 [e :UE 2098 ]
 }
-"91
+"92
 [v _i2c_master_start_next_in_Q `(v ~T0 @X0 1 ef ]
 {
-[; ;i2cMaster.c: 91: void i2c_master_start_next_in_Q() {
+[; ;i2cMaster.c: 92: void i2c_master_start_next_in_Q() {
 [e :U _i2c_master_start_next_in_Q ]
 [f ]
-[; ;i2cMaster.c: 92: if (i2c_p.status != I2C_FREE) {
-"92
-[e $ ! != -> . _i2c_p 4 `i -> . `E16385 0 `i 2100  ]
-{
-[; ;i2cMaster.c: 93: return;
-"93
-[e $UE 2099  ]
+[; ;i2cMaster.c: 94: DebugPrint(0x03);
 "94
+[e ( _DebugPrint (1 -> -> 3 `i `uc ]
+[; ;i2cMaster.c: 95: if (i2c_p.status != I2C_FREE) {
+"95
+[e $ ! != -> . _i2c_p 4 `i -> . `E16388 0 `i 2100  ]
+{
+[; ;i2cMaster.c: 96: return;
+"96
+[e $UE 2099  ]
+"97
 }
 [e :U 2100 ]
-"95
-[v _msgType `uc ~T0 @X0 1 a ]
-[; ;i2cMaster.c: 94: }
-[; ;i2cMaster.c: 95: unsigned char msgType;
-[; ;i2cMaster.c: 97: i2c_p.buflen = FromMainHigh_recvmsg(10, &msgType, i2c_p.buffer);
-"97
-[e = . _i2c_p 1 -> ( _FromMainHigh_recvmsg (3 , , -> -> 10 `i `uc &U _msgType -> &U . _i2c_p 0 `*v `uc ]
-[; ;i2cMaster.c: 99: if (msgType == 47) {
+[; ;i2cMaster.c: 97: }
+[; ;i2cMaster.c: 98: DebugPrint(0x04);
+"98
+[e ( _DebugPrint (1 -> -> 4 `i `uc ]
 "99
+[v _msgType `uc ~T0 @X0 1 a ]
+[; ;i2cMaster.c: 99: unsigned char msgType;
+[; ;i2cMaster.c: 101: i2c_p.buflen = FromMainHigh_recvmsg(10, &msgType, i2c_p.buffer);
+"101
+[e = . _i2c_p 1 -> ( _FromMainHigh_recvmsg (3 , , -> -> 10 `i `uc &U _msgType -> &U . _i2c_p 0 `*v `uc ]
+[; ;i2cMaster.c: 103: if (msgType == 47) {
+"103
 [e $ ! == -> _msgType `i -> 47 `i 2101  ]
 {
-[; ;i2cMaster.c: 100: i2c_p.buffind = 1;
-"100
-[e = . _i2c_p 2 -> -> 1 `i `uc ]
-[; ;i2cMaster.c: 101: SEN = 1;
-"101
-[e = _SEN -> -> 1 `i `b ]
-[; ;i2cMaster.c: 102: SSPIF = 1;
-"102
-[e = _SSPIF -> -> 1 `i `b ]
-[; ;i2cMaster.c: 103: SSPBUF = i2c_p.buffer[0];
-"103
-[e = _SSPBUF *U + &U . _i2c_p 0 * -> -> -> 0 `i `ui `ux -> -> # *U &U . _i2c_p 0 `ui `ux ]
-[; ;i2cMaster.c: 104: i2c_p.status = I2C_SENDING;
+[; ;i2cMaster.c: 104: i2c_p.buffind = 1;
 "104
-[e = . _i2c_p 4 -> . `E16385 1 `uc ]
+[e = . _i2c_p 2 -> -> 1 `i `uc ]
+[; ;i2cMaster.c: 105: SEN = 1;
 "105
-}
-[; ;i2cMaster.c: 105: }
-[e $U 2102  ]
+[e = _SEN -> -> 1 `i `b ]
+[; ;i2cMaster.c: 106: SSPIF = 1;
 "106
+[e = _SSPIF -> -> 1 `i `b ]
+[; ;i2cMaster.c: 107: SSPBUF = i2c_p.buffer[0];
+"107
+[e = _SSPBUF *U + &U . _i2c_p 0 * -> -> -> 0 `i `ui `ux -> -> # *U &U . _i2c_p 0 `ui `ux ]
+[; ;i2cMaster.c: 108: i2c_p.status = I2C_SENDING;
+"108
+[e = . _i2c_p 4 -> . `E16388 1 `uc ]
+"109
+}
+[; ;i2cMaster.c: 109: }
+[e $U 2102  ]
+"110
 [e :U 2101 ]
-[; ;i2cMaster.c: 106: else if (msgType == 48) {
+[; ;i2cMaster.c: 110: else if (msgType == 48) {
 [e $ ! == -> _msgType `i -> 48 `i 2103  ]
 {
-[; ;i2cMaster.c: 107: i2c_p.buffind = 0;
-"107
-[e = . _i2c_p 2 -> -> 0 `i `uc ]
-[; ;i2cMaster.c: 108: i2c_p.buflen = i2c_p.buffer[1];
-"108
-[e = . _i2c_p 1 *U + &U . _i2c_p 0 * -> -> -> 1 `i `ui `ux -> -> # *U &U . _i2c_p 0 `ui `ux ]
-[; ;i2cMaster.c: 109: i2c_p.status = I2C_REQUESTING;
-"109
-[e = . _i2c_p 4 -> . `E16385 2 `uc ]
-[; ;i2cMaster.c: 110: SEN = 1;
-"110
-[e = _SEN -> -> 1 `i `b ]
+[; ;i2cMaster.c: 111: i2c_p.buffind = 0;
 "111
-}
-[; ;i2cMaster.c: 111: }
-[e $U 2104  ]
+[e = . _i2c_p 2 -> -> 0 `i `uc ]
+[; ;i2cMaster.c: 112: i2c_p.buflen = i2c_p.buffer[1];
 "112
+[e = . _i2c_p 1 *U + &U . _i2c_p 0 * -> -> -> 1 `i `ui `ux -> -> # *U &U . _i2c_p 0 `ui `ux ]
+[; ;i2cMaster.c: 113: i2c_p.status = I2C_REQUESTING;
+"113
+[e = . _i2c_p 4 -> . `E16388 2 `uc ]
+[; ;i2cMaster.c: 114: SEN = 1;
+"114
+[e = _SEN -> -> 1 `i `b ]
+"115
+}
+[; ;i2cMaster.c: 115: }
+[e $U 2104  ]
+"116
 [e :U 2103 ]
-[; ;i2cMaster.c: 112: else if (msgType == 49) {
+[; ;i2cMaster.c: 116: else if (msgType == 49) {
 [e $ ! == -> _msgType `i -> 49 `i 2105  ]
 {
-[; ;i2cMaster.c: 113: i2c_p.buffind = 0;
-"113
-[e = . _i2c_p 2 -> -> 0 `i `uc ]
-[; ;i2cMaster.c: 114: i2c_p.buflen = i2c_p.buffer[2];
-"114
-[e = . _i2c_p 1 *U + &U . _i2c_p 0 * -> -> -> 2 `i `ui `ux -> -> # *U &U . _i2c_p 0 `ui `ux ]
-[; ;i2cMaster.c: 115: i2c_p.status = I2C_REQUESTING_REG;
-"115
-[e = . _i2c_p 4 -> . `E16385 4 `uc ]
-[; ;i2cMaster.c: 116: SEN = 1;
-"116
-[e = _SEN -> -> 1 `i `b ]
+[; ;i2cMaster.c: 117: DebugPrint(0x05);
 "117
+[e ( _DebugPrint (1 -> -> 5 `i `uc ]
+[; ;i2cMaster.c: 118: i2c_p.buffind = 0;
+"118
+[e = . _i2c_p 2 -> -> 0 `i `uc ]
+[; ;i2cMaster.c: 119: i2c_p.buflen = i2c_p.buffer[2];
+"119
+[e = . _i2c_p 1 *U + &U . _i2c_p 0 * -> -> -> 2 `i `ui `ux -> -> # *U &U . _i2c_p 0 `ui `ux ]
+[; ;i2cMaster.c: 120: i2c_p.status = I2C_REQUESTING_REG;
+"120
+[e = . _i2c_p 4 -> . `E16388 4 `uc ]
+[; ;i2cMaster.c: 121: SEN = 1;
+"121
+[e = _SEN -> -> 1 `i `b ]
+"122
 }
 [e :U 2105 ]
-"118
+"123
 [e :U 2104 ]
 [e :U 2102 ]
-[; ;i2cMaster.c: 117: }
-[; ;i2cMaster.c: 118: }
+[; ;i2cMaster.c: 122: }
+[; ;i2cMaster.c: 123: }
 [e :UE 2099 ]
 }
-"121
+"126
 [v _i2c_master_int_handler `(v ~T0 @X0 1 ef ]
 {
-[; ;i2cMaster.c: 121: void i2c_master_int_handler() {
+[; ;i2cMaster.c: 126: void i2c_master_int_handler() {
 [e :U _i2c_master_int_handler ]
 [f ]
-[; ;i2cMaster.c: 122: switch (i2c_p.status) {
-"122
+[; ;i2cMaster.c: 127: switch (i2c_p.status) {
+"127
 [e $U 2108  ]
 {
-[; ;i2cMaster.c: 123: case I2C_FREE: {
-"123
+[; ;i2cMaster.c: 128: case I2C_FREE: {
+"128
 [e :U 2109 ]
 {
-[; ;i2cMaster.c: 125: break;
-"125
+[; ;i2cMaster.c: 130: break;
+"130
 [e $U 2107  ]
-"126
+"131
 }
-[; ;i2cMaster.c: 126: }
-[; ;i2cMaster.c: 127: case I2C_SENDING: {
-"127
+[; ;i2cMaster.c: 131: }
+[; ;i2cMaster.c: 132: case I2C_SENDING: {
+"132
 [e :U 2110 ]
 {
-[; ;i2cMaster.c: 128: if (i2c_p.buffind < i2c_p.buflen ) {
-"128
+[; ;i2cMaster.c: 133: if (i2c_p.buffind < i2c_p.buflen ) {
+"133
 [e $ ! < -> . _i2c_p 2 `i -> . _i2c_p 1 `i 2111  ]
 {
-[; ;i2cMaster.c: 129: SSPBUF = i2c_p.buffer[i2c_p.buffind++];
-"129
+[; ;i2cMaster.c: 134: SSPBUF = i2c_p.buffer[i2c_p.buffind++];
+"134
 [e = _SSPBUF *U + &U . _i2c_p 0 * -> ++ . _i2c_p 2 -> -> 1 `i `uc `ux -> -> # *U &U . _i2c_p 0 `ui `ux ]
-"130
+"135
 }
-[; ;i2cMaster.c: 130: } else {
+[; ;i2cMaster.c: 135: } else {
 [e $U 2112  ]
 [e :U 2111 ]
 {
-[; ;i2cMaster.c: 131: i2c_p.status = I2C_FREE;
-"131
-[e = . _i2c_p 4 -> . `E16385 0 `uc ]
-[; ;i2cMaster.c: 132: PEN = 1;
-"132
+[; ;i2cMaster.c: 136: i2c_p.status = I2C_FREE;
+"136
+[e = . _i2c_p 4 -> . `E16388 0 `uc ]
+[; ;i2cMaster.c: 137: PEN = 1;
+"137
 [e = _PEN -> -> 1 `i `b ]
-"133
+[; ;i2cMaster.c: 138: i2c_master_start_next_in_Q();
+"138
+[e ( _i2c_master_start_next_in_Q ..  ]
+"139
 }
 [e :U 2112 ]
-[; ;i2cMaster.c: 133: }
-[; ;i2cMaster.c: 134: break;
-"134
+[; ;i2cMaster.c: 139: }
+[; ;i2cMaster.c: 140: break;
+"140
 [e $U 2107  ]
-"135
+"141
 }
-[; ;i2cMaster.c: 135: }
-[; ;i2cMaster.c: 136: case I2C_REQUESTING: {
-"136
+[; ;i2cMaster.c: 141: }
+[; ;i2cMaster.c: 142: case I2C_REQUESTING: {
+"142
 [e :U 2113 ]
 {
-[; ;i2cMaster.c: 137: SSPBUF = i2c_p.buffer[0];
-"137
-[e = _SSPBUF *U + &U . _i2c_p 0 * -> -> -> 0 `i `ui `ux -> -> # *U &U . _i2c_p 0 `ui `ux ]
-[; ;i2cMaster.c: 138: i2c_p.status = I2C_RECEIVING;
-"138
-[e = . _i2c_p 4 -> . `E16385 3 `uc ]
-[; ;i2cMaster.c: 139: break;
-"139
-[e $U 2107  ]
-"140
-}
-[; ;i2cMaster.c: 140: }
-[; ;i2cMaster.c: 141: case I2C_RECEIVING: {
-"141
-[e :U 2114 ]
-{
-[; ;i2cMaster.c: 142: if (i2c_p.buffind < i2c_p.buflen) {
-"142
-[e $ ! < -> . _i2c_p 2 `i -> . _i2c_p 1 `i 2115  ]
-{
-[; ;i2cMaster.c: 143: i2c_p.status = I2C_ACKNOWLEDGE;
+[; ;i2cMaster.c: 143: SSPBUF = i2c_p.buffer[0];
 "143
-[e = . _i2c_p 4 -> . `E16385 5 `uc ]
-[; ;i2cMaster.c: 144: RCEN = 1;
+[e = _SSPBUF *U + &U . _i2c_p 0 * -> -> -> 0 `i `ui `ux -> -> # *U &U . _i2c_p 0 `ui `ux ]
+[; ;i2cMaster.c: 144: i2c_p.status = I2C_RECEIVING;
 "144
-[e = _RCEN -> -> 1 `i `b ]
-[; ;i2cMaster.c: 145: i2c_p.buffer[i2c_p.buffind++] = SSPBUF;
+[e = . _i2c_p 4 -> . `E16388 3 `uc ]
+[; ;i2cMaster.c: 145: break;
 "145
-[e = *U + &U . _i2c_p 0 * -> ++ . _i2c_p 2 -> -> 1 `i `uc `ux -> -> # *U &U . _i2c_p 0 `ui `ux _SSPBUF ]
+[e $U 2107  ]
 "146
 }
-[; ;i2cMaster.c: 146: } else {
+[; ;i2cMaster.c: 146: }
+[; ;i2cMaster.c: 147: case I2C_RECEIVING: {
+"147
+[e :U 2114 ]
+{
+[; ;i2cMaster.c: 148: if (i2c_p.buffind < i2c_p.buflen) {
+"148
+[e $ ! < -> . _i2c_p 2 `i -> . _i2c_p 1 `i 2115  ]
+{
+[; ;i2cMaster.c: 149: i2c_p.status = I2C_ACKNOWLEDGE;
+"149
+[e = . _i2c_p 4 -> . `E16388 5 `uc ]
+[; ;i2cMaster.c: 150: RCEN = 1;
+"150
+[e = _RCEN -> -> 1 `i `b ]
+[; ;i2cMaster.c: 151: i2c_p.buffer[i2c_p.buffind++] = SSPBUF;
+"151
+[e = *U + &U . _i2c_p 0 * -> ++ . _i2c_p 2 -> -> 1 `i `uc `ux -> -> # *U &U . _i2c_p 0 `ui `ux _SSPBUF ]
+"152
+}
+[; ;i2cMaster.c: 152: } else {
 [e $U 2116  ]
 [e :U 2115 ]
 {
-[; ;i2cMaster.c: 147: i2c_p.status = I2C_FREE;
-"147
-[e = . _i2c_p 4 -> . `E16385 0 `uc ]
-[; ;i2cMaster.c: 148: PEN = 1;
-"148
+[; ;i2cMaster.c: 153: i2c_p.status = I2C_FREE;
+"153
+[e = . _i2c_p 4 -> . `E16388 0 `uc ]
+[; ;i2cMaster.c: 154: PEN = 1;
+"154
 [e = _PEN -> -> 1 `i `b ]
-[; ;i2cMaster.c: 150: ToMainHigh_sendmsg(i2c_p.buflen, 40, i2c_p.buffer);
-"150
+[; ;i2cMaster.c: 156: ToMainHigh_sendmsg(i2c_p.buflen, 40, i2c_p.buffer);
+"156
 [e ( _ToMainHigh_sendmsg (3 , , . _i2c_p 1 -> -> 40 `i `uc -> &U . _i2c_p 0 `*v ]
-"151
+[; ;i2cMaster.c: 157: i2c_master_start_next_in_Q();
+"157
+[e ( _i2c_master_start_next_in_Q ..  ]
+"158
 }
 [e :U 2116 ]
-[; ;i2cMaster.c: 151: }
-[; ;i2cMaster.c: 152: break;
-"152
+[; ;i2cMaster.c: 158: }
+[; ;i2cMaster.c: 159: break;
+"159
 [e $U 2107  ]
-"153
+"160
 }
-[; ;i2cMaster.c: 153: }
-[; ;i2cMaster.c: 154: case I2C_REQUESTING_REG: {
-"154
+[; ;i2cMaster.c: 160: }
+[; ;i2cMaster.c: 161: case I2C_REQUESTING_REG: {
+"161
 [e :U 2117 ]
 {
-[; ;i2cMaster.c: 155: if (i2c_p.buffind >= 2) {
-"155
+[; ;i2cMaster.c: 162: DebugPrint(0x07);
+"162
+[e ( _DebugPrint (1 -> -> 7 `i `uc ]
+[; ;i2cMaster.c: 163: if (i2c_p.buffind >= 2) {
+"163
 [e $ ! >= -> . _i2c_p 2 `i -> 2 `i 2118  ]
 {
-[; ;i2cMaster.c: 156: SSPBUF = i2c_p.buffer[i2c_p.buffind++];
-"156
+[; ;i2cMaster.c: 164: SSPBUF = i2c_p.buffer[i2c_p.buffind++];
+"164
 [e = _SSPBUF *U + &U . _i2c_p 0 * -> ++ . _i2c_p 2 -> -> 1 `i `uc `ux -> -> # *U &U . _i2c_p 0 `ui `ux ]
-"157
+"165
 }
-[; ;i2cMaster.c: 157: }
+[; ;i2cMaster.c: 165: }
 [e $U 2119  ]
-"158
+"166
 [e :U 2118 ]
-[; ;i2cMaster.c: 158: else {
+[; ;i2cMaster.c: 166: else {
 {
-[; ;i2cMaster.c: 159: i2c_p.buffind = 0;
-"159
+[; ;i2cMaster.c: 167: i2c_p.buffind = 0;
+"167
 [e = . _i2c_p 2 -> -> 0 `i `uc ]
-[; ;i2cMaster.c: 160: i2c_p.status = I2C_RECEIVING;
-"160
-[e = . _i2c_p 4 -> . `E16385 3 `uc ]
-[; ;i2cMaster.c: 161: RSEN = 1;
-"161
+[; ;i2cMaster.c: 168: i2c_p.status = I2C_RECEIVING;
+"168
+[e = . _i2c_p 4 -> . `E16388 3 `uc ]
+[; ;i2cMaster.c: 169: RSEN = 1;
+"169
 [e = _RSEN -> -> 1 `i `b ]
-"162
+"170
 }
 [e :U 2119 ]
-[; ;i2cMaster.c: 162: }
-[; ;i2cMaster.c: 163: break;
-"163
+[; ;i2cMaster.c: 170: }
+[; ;i2cMaster.c: 171: break;
+"171
 [e $U 2107  ]
-"164
+"172
 }
-[; ;i2cMaster.c: 164: }
-[; ;i2cMaster.c: 165: case I2C_ACKNOWLEDGE: {
-"165
+[; ;i2cMaster.c: 172: }
+[; ;i2cMaster.c: 173: case I2C_ACKNOWLEDGE: {
+"173
 [e :U 2120 ]
 {
-[; ;i2cMaster.c: 166: ACKEN = 1;
-"166
+[; ;i2cMaster.c: 174: ACKEN = 1;
+"174
 [e = _ACKEN -> -> 1 `i `b ]
-[; ;i2cMaster.c: 167: if (i2c_p.buffind < i2c_p.buflen) {
-"167
+[; ;i2cMaster.c: 175: if (i2c_p.buffind < i2c_p.buflen) {
+"175
 [e $ ! < -> . _i2c_p 2 `i -> . _i2c_p 1 `i 2121  ]
 {
-[; ;i2cMaster.c: 168: ACKDT = 0;
-"168
+[; ;i2cMaster.c: 176: ACKDT = 0;
+"176
 [e = _ACKDT -> -> 0 `i `b ]
-"169
+"177
 }
-[; ;i2cMaster.c: 169: } else {
+[; ;i2cMaster.c: 177: } else {
 [e $U 2122  ]
 [e :U 2121 ]
 {
-[; ;i2cMaster.c: 170: ACKDT = 1;
-"170
+[; ;i2cMaster.c: 178: ACKDT = 1;
+"178
 [e = _ACKDT -> -> 1 `i `b ]
-"171
+"179
 }
 [e :U 2122 ]
-[; ;i2cMaster.c: 171: }
-[; ;i2cMaster.c: 172: i2c_p.status = I2C_RECEIVING;
-"172
-[e = . _i2c_p 4 -> . `E16385 3 `uc ]
-[; ;i2cMaster.c: 173: break;
-"173
+[; ;i2cMaster.c: 179: }
+[; ;i2cMaster.c: 180: i2c_p.status = I2C_RECEIVING;
+"180
+[e = . _i2c_p 4 -> . `E16388 3 `uc ]
+[; ;i2cMaster.c: 181: break;
+"181
 [e $U 2107  ]
-"174
+"182
 }
-"175
+"183
 }
-[; ;i2cMaster.c: 174: }
-[; ;i2cMaster.c: 175: }
+[; ;i2cMaster.c: 182: }
+[; ;i2cMaster.c: 183: }
 [e $U 2107  ]
-"122
+"127
 [e :U 2108 ]
-[e [\ . _i2c_p 4 , $ -> . `E16385 0 `uc 2109
- , $ -> . `E16385 1 `uc 2110
- , $ -> . `E16385 2 `uc 2113
- , $ -> . `E16385 3 `uc 2114
- , $ -> . `E16385 4 `uc 2117
- , $ -> . `E16385 5 `uc 2120
+[e [\ . _i2c_p 4 , $ -> . `E16388 0 `uc 2109
+ , $ -> . `E16388 1 `uc 2110
+ , $ -> . `E16388 2 `uc 2113
+ , $ -> . `E16388 3 `uc 2114
+ , $ -> . `E16388 4 `uc 2117
+ , $ -> . `E16388 5 `uc 2120
  2107 ]
-"175
+"183
 [e :U 2107 ]
-[; ;i2cMaster.c: 176: }
-"176
+[; ;i2cMaster.c: 184: }
+"184
 [e :UE 2106 ]
 }
-"184
+"192
 [v _I2CInit `(v ~T0 @X0 1 ef ]
 {
-[; ;i2cMaster.c: 184: void I2CInit(void){
+[; ;i2cMaster.c: 192: void I2CInit(void){
 [e :U _I2CInit ]
 [f ]
-[; ;i2cMaster.c: 185: TRISC3 = 1;
-"185
+[; ;i2cMaster.c: 193: TRISC3 = 1;
+"193
 [e = _TRISC3 -> -> 1 `i `b ]
-[; ;i2cMaster.c: 186: TRISC4 = 1;
-"186
+[; ;i2cMaster.c: 194: TRISC4 = 1;
+"194
 [e = _TRISC4 -> -> 1 `i `b ]
-[; ;i2cMaster.c: 187: SSPSTAT |= 0x80;
-"187
+[; ;i2cMaster.c: 195: SSPSTAT |= 0x80;
+"195
 [e =| _SSPSTAT -> -> 128 `i `uc ]
-[; ;i2cMaster.c: 188: SSPCON1 = 0x28;
-"188
+[; ;i2cMaster.c: 196: SSPCON1 = 0x28;
+"196
 [e = _SSPCON1 -> -> 40 `i `uc ]
-[; ;i2cMaster.c: 189: SSPADD = 0x28;
-"189
+[; ;i2cMaster.c: 197: SSPADD = 0x28;
+"197
 [e = _SSPADD -> -> 40 `i `uc ]
-[; ;i2cMaster.c: 191: i2c_p.status = I2C_FREE;
-"191
-[e = . _i2c_p 4 -> . `E16385 0 `uc ]
-[; ;i2cMaster.c: 192: }
-"192
+[; ;i2cMaster.c: 199: i2c_p.status = I2C_FREE;
+"199
+[e = . _i2c_p 4 -> . `E16388 0 `uc ]
+[; ;i2cMaster.c: 200: }
+"200
 [e :UE 2123 ]
 }

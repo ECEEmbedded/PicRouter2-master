@@ -18748,12 +18748,7 @@ WriteTimer0(0);
 void timer1_int_handler() {
 unsigned int result;
 
-
-
-LATBbits.LATB1 = !LATBbits.LATB1;
-
-
-result = ReadTimer1();
+# 37
 ToMainLow_sendmsg(0, 11, (void *) 0);
 
 

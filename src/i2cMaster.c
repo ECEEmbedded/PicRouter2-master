@@ -1,6 +1,7 @@
 #include "i2cMaster.h"
 #include "messages.h"
 #include "my_i2c.h"
+#include "debug.h"
 
 enum {
     I2C_FREE,
@@ -76,12 +77,12 @@ unsigned char i2c_master_recv(unsigned char ID, unsigned char length) {
 }
 
 unsigned char i2c_master_request_reg(unsigned char ID, unsigned char adr, unsigned char length) {
+        DebugPrint(0x02);
     unsigned char buf[3];
     buf[0] = (ID << 1)  | 0x01;
     buf[1] = adr;
     buf[2] = length;
     FromMainHigh_sendmsg(3,MSGT_I2C_MASTER_REQUEST_REG,buf);
-
     i2c_master_start_next_in_Q();
 
     return(0);
@@ -89,9 +90,12 @@ unsigned char i2c_master_request_reg(unsigned char ID, unsigned char adr, unsign
 
 // private function
 void i2c_master_start_next_in_Q() {
+
+        DebugPrint(0x03);
     if (i2c_p.status != I2C_FREE) {
         return;
     }
+        DebugPrint(0x04);
     unsigned char msgType;
 
     i2c_p.buflen = FromMainHigh_recvmsg(MSGLEN, &msgType, i2c_p.buffer);
@@ -110,6 +114,7 @@ void i2c_master_start_next_in_Q() {
         SEN = 1;
     }
     else if (msgType == MSGT_I2C_MASTER_REQUEST_REG) {
+        DebugPrint(0x05);
         i2c_p.buffind = 0;
         i2c_p.buflen = i2c_p.buffer[2];
         i2c_p.status = I2C_REQUESTING_REG;
@@ -130,6 +135,7 @@ void i2c_master_int_handler() {
                 } else {    // we have nothing left to send
                     i2c_p.status = I2C_FREE;
                     PEN = 1;
+                    i2c_master_start_next_in_Q();
                 }
             break;
         }
@@ -148,10 +154,12 @@ void i2c_master_int_handler() {
                 PEN = 1;
 
                 ToMainHigh_sendmsg(i2c_p.buflen, MSGT_I2C_DATA, i2c_p.buffer);
+                i2c_master_start_next_in_Q();
             }
             break;
         }
         case I2C_REQUESTING_REG: {
+        DebugPrint(0x07);
             if (i2c_p.buffind >= 2) {
                 SSPBUF = i2c_p.buffer[i2c_p.buffind++];
             }

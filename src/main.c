@@ -18,6 +18,9 @@
 #include "timer0_thread.h"
 #include "i2cMaster.h"
 #include "drivers.h"
+#include "ColorSensor.h"
+
+#include "debug.h"
 
 #ifdef __USE18F45J10
 // CONFIG1L
@@ -127,6 +130,7 @@ void main(void) {
     signed char length;
     unsigned char msgtype;
     unsigned char last_reg_recvd;
+    unsigned char RedL;
     uart_comm uc;
 //    i2c_comm ic;
     unsigned char msgbuffer[MSGLEN + 1];
@@ -191,8 +195,9 @@ void main(void) {
     // 0 is low, 1 is high
     // Timer1 interrupt
     IPR1bits.TMR1IP = 0;
-    // USART RX interrupt
+    // USART RX/TX interrupt
     IPR1bits.RCIP = 0;
+    IPR1bits.TXIP = 0;
     // I2C interrupt
     IPR1bits.SSPIP = 1;
 
@@ -259,12 +264,13 @@ void main(void) {
 //    OpenI2C(MASTER, SLEW_OFF);
 
     //Load Drivers
-    DriverColorAdd(0x4F);
-    DriverColorAdd(0x4F);
+//    DriverColorAdd(0x4F);
+//    DriverColorAdd(0x4F);
    // DriverIRAdd(0x49);
 
     static int currentPollDriver = 0;
     while (1) {
+        DebugPrint(0x00);
 
         // Call a routine that blocks until either on the incoming
         // messages queues has a message (this may put the processor into
@@ -291,11 +297,16 @@ void main(void) {
                 };
                 case MSGT_I2C_DATA:
                 {
+        DebugPrint(0x0C);
                   //IR Sensor
-                  unsigned char *msg = msgbuffer+1;
+                  //unsigned char *msg = msgbuffer+1;
                   //0 means no data is available and 0xFF means that there is an error (No connection`)
-                  if (msg[1] != 0 && msg[1] != 0xFF)
-                    start_UART_send(8, msg);
+                  if (msgbuffer[0] == COLOR_ADDRESS){
+                     RedL = msgbuffer[2];
+                  }
+
+                  else if (msgbuffer[1] != 0 && msgbuffer[1] != 0xFF)
+                    start_UART_send(8, msgbuffer);
                     
                     // ++currentPollDriver;
                     // 
@@ -341,18 +352,25 @@ void main(void) {
                     // add queue to make this section better
                     if (currentPollDriver % 3 == 0) { // IR
                         i2c_master_recv(0x4F, 8);
-                    } else if (currentPollDriver % 3 == 2) { // Encoders
+                    } else if (currentPollDriver % 3 == 1) { // Encoders
                         //i2c_master_recv(0x4F, 8);
-                    } else if (currentPollDriver % 3 == 3) { // Color
-                        i2c_master_request_reg(0,1,1/*color adr, reg1 adr, length (probably 1)*/);
-                        i2c_master_request_reg(0,2,1/*color adr, reg2 adr, length (probably 1)*/);
+                    } else if (currentPollDriver % 3 == 2) { // Color
+                        i2c_master_request_reg(COLOR_ADDRESS,DATA_RED_LO,1);
+//                        i2c_master_request_reg(COLOR_ADDRESS,DATA_RED_HI,1/*color adr, reg2 adr, length (probably 1)*/);
+//                        i2c_master_request_reg(COLOR_ADDRESS,DATA_GREEN_LO,1/*color adr, reg2 adr, length (probably 1)*/);
+//                        i2c_master_request_reg(COLOR_ADDRESS,DATA_GREEN_HI,1/*color adr, reg1 adr, length (probably 1)*/);
+//                        i2c_master_request_reg(COLOR_ADDRESS,DATA_BLUE_LO,1/*color adr, reg2 adr, length (probably 1)*/);
+//                        i2c_master_request_reg(COLOR_ADDRESS,DATA_BLUE_HI,1/*color adr, reg2 adr, length (probably 1)*/);
+//                        i2c_master_request_reg(COLOR_ADDRESS,DATA_CLEAR_LO,1/*color adr, reg1 adr, length (probably 1)*/);
+//                        i2c_master_request_reg(COLOR_ADDRESS,DATA_CLEAR_HI,1/*color adr, reg2 adr, length (probably 1)*/);
+
                     }
 
 //                    msgbuffer[0] = 0x10;
 //                    msgbuffer[1] = 0x5A;
 //                    i2c_master_send(0x4F, 1, msgbuffer);
                     //i2c_master_recv(0x4F, 0x10, 8);
-                    timer1_lthread(&t1thread_data, msgtype, length, msgbuffer);
+                    //timer1_lthread(&t1thread_data, msgtype, length, msgbuffer);
                     break;
                 };
              

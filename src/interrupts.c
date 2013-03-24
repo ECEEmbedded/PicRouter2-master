@@ -83,7 +83,6 @@ interrupt
 void InterruptHandlerHigh() {
     // We need to check the interrupt flag of each enabled high-priority interrupt to
     // see which device generated this interrupt.  Then we can call the correct handler.
-
     // check to see if we have an I2C interrupt
     if (PIR1bits.SSPIF) {
         // clear the interrupt flag
@@ -98,8 +97,7 @@ void InterruptHandlerHigh() {
         // call whatever handler you want (this is "user" defined)
         timer0_int_handler();
     }
-
-
+    
     // Check for ADC interrupt
     //if (PIR1bits.ADIF) {
     //    adcIntHandler();
