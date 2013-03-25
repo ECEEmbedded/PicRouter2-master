@@ -77,7 +77,6 @@ unsigned char i2c_master_recv(unsigned char ID, unsigned char length) {
 }
 
 unsigned char i2c_master_request_reg(unsigned char ID, unsigned char adr, unsigned char length) {
-        DebugPrint(0x02);
     unsigned char buf[3];
     buf[0] = (ID << 1)  | 0x01;
     buf[1] = adr;
@@ -90,17 +89,20 @@ unsigned char i2c_master_request_reg(unsigned char ID, unsigned char adr, unsign
 
 // private function
 void i2c_master_start_next_in_Q() {
-
-        DebugPrint(0x03);
     if (i2c_p.status != I2C_FREE) {
         return;
     }
-        DebugPrint(0x04);
+        DebugPrint(0x02);
     unsigned char msgType;
 
     i2c_p.buflen = FromMainHigh_recvmsg(MSGLEN, &msgType, i2c_p.buffer);
 
+    if (i2c_p.buflen == MSGQUEUE_EMPTY) {
+        return;
+    }
+
     if (msgType == MSGT_I2C_MASTER_SEND) {
+        DebugPrint(0x03);
         i2c_p.buffind = 1;
         SEN = 1;
         SSPIF = 1;
@@ -108,8 +110,17 @@ void i2c_master_start_next_in_Q() {
         i2c_p.status = I2C_SENDING;
     }
     else if (msgType == MSGT_I2C_MASTER_RECV) {
+        DebugPrint(0x04);
         i2c_p.buffind = 0;
         i2c_p.buflen = i2c_p.buffer[1];
+
+        DebugPrint(0x00);
+        DebugPrint(0x0F);
+        DebugPrint((i2c_p.buflen >> 4));
+        DebugPrint(i2c_p.buflen);
+        DebugPrint(0x00);
+        DebugPrint(0x0F);
+        
         i2c_p.status = I2C_REQUESTING;
         SEN = 1;
     }
@@ -126,40 +137,44 @@ void i2c_master_start_next_in_Q() {
 void i2c_master_int_handler() {
     switch (i2c_p.status) {
         case I2C_FREE: {
-            // Should never get an interrupt in this case
+        DebugPrint(0x06);
+            i2c_master_start_next_in_Q();
             break;
         }
         case I2C_SENDING: {
+        DebugPrint(0x07);
             if (i2c_p.buffind < i2c_p.buflen/* && !SSPCON2bits.ACKSTAT*/) {
                     SSPBUF = i2c_p.buffer[i2c_p.buffind++];
                 } else {    // we have nothing left to send
                     i2c_p.status = I2C_FREE;
                     PEN = 1;
-                    i2c_master_start_next_in_Q();
+                    //i2c_master_start_next_in_Q();
                 }
             break;
         }
         case I2C_REQUESTING: {
+        DebugPrint(0x08);
             SSPBUF = i2c_p.buffer[0];
             i2c_p.status = I2C_RECEIVING;
             break;
         }
         case I2C_RECEIVING: {
             if (i2c_p.buffind < i2c_p.buflen) {
+        DebugPrint(0x0D);
                 i2c_p.status = I2C_ACKNOWLEDGE;
                 RCEN = 1;
                 i2c_p.buffer[i2c_p.buffind++] = SSPBUF;
             } else {    // we have nothing left to send
+        DebugPrint(0x0E);
                 i2c_p.status = I2C_FREE;
                 PEN = 1;
 
                 ToMainHigh_sendmsg(i2c_p.buflen, MSGT_I2C_DATA, i2c_p.buffer);
-                i2c_master_start_next_in_Q();
             }
             break;
         }
         case I2C_REQUESTING_REG: {
-        DebugPrint(0x07);
+            DebugPrint(0x0A);
             if (i2c_p.buffind >= 2) {
                 SSPBUF = i2c_p.buffer[i2c_p.buffind++];
             }
@@ -171,6 +186,7 @@ void i2c_master_int_handler() {
             break;
         }
         case I2C_ACKNOWLEDGE: {
+        DebugPrint(0x0B);
             ACKEN = 1;
             if (i2c_p.buffind < i2c_p.buflen) {
                 ACKDT = 0;
@@ -198,161 +214,3 @@ void I2CInit(void){
     
     i2c_p.status = I2C_FREE;
 }
-
-// Old functions (for not interrupt driven)
-///*
-//Function: I2CStart
-//Return:
-//Arguments:
-//Description: Send a start condition on I2C Bus
-//*/
-//void I2CStart(){
-//    SEN = 1;         /* Start condition enabled */
-//    while(SEN);      /* automatically cleared by hardware */
-//                     /* wait for start condition to finish */
-//}
-//
-///*
-//Function: I2CStop
-//Return:
-//Arguments:
-//Description: Send a stop condition on I2C Bus
-//*/
-//void I2CStop(){
-//    PEN = 1;         /* Stop condition enabled */
-//    while(PEN);      /* Wait for stop condition to finish */
-//                    /* PEN automatically cleared by hardware */
-//}
-//
-///*
-//Function: I2CRestart
-//Return:
-//Arguments:
-//Description: Sends a repeated start condition on I2C Bus
-//*/
-//void I2CRestart(){
-//    RSEN = 1;        /* Repeated start enabled */
-//    while(RSEN);     /* wait for condition to finish */
-//}
-//
-///*
-//Function: I2CAck
-//Return:
-//Arguments:
-//Description: Generates acknowledge for a transfer
-//*/
-//void I2CAck(){
-//    ACKDT = 0;       /* Acknowledge data bit, 0 = ACK */
-//    ACKEN = 1;       /* Ack data enabled */
-//    while(ACKEN);    /* wait for ack data to send on bus */
-//}
-//
-///*
-//Function: I2CNck
-//Return:
-//Arguments:
-//Description: Generates Not-acknowledge for a transfer
-//*/
-//void I2CNak(){
-//    ACKDT = 1;       /* Acknowledge data bit, 1 = NAK */
-//    ACKEN = 1;       /* Ack data enabled */
-//    while(ACKEN);    /* wait for ack data to send on bus */
-//}
-//
-///*
-//Function: I2CWait
-//Return:
-//Arguments:
-//Description: wait for transfer to finish
-//*/
-//void I2CWait(){
-//    while ( ( SSPCON2 & 0x1F ) || ( SSPSTAT & 0x04 ) );
-//    /* wait for any pending transfer */
-//}
-//
-///*
-//Function: I2CSend
-//Return:
-//Arguments: dat - 8-bit data to be sent on bus
-//           data can be either address/data byte
-//Description: Send 8-bit data on I2C bus
-//*/
-//void I2CSend(unsigned char dat){
-//    SSPBUF = dat;    /* Move data to SSPBUF */
-//    SSPIF=0;
-//    while(BF);       /* wait till complete data is sent from buffer */
-//    I2CWait();       /* wait for any pending transfer */
-//}
-//
-///*
-//Function: I2CRead
-//Return:    8-bit data read from I2C bus
-//Arguments:
-//Description: read 8-bit data from I2C bus
-//*/
-//unsigned char I2CRead(void){
-//    unsigned char temp;
-///* Reception works if transfer is initiated in read mode */
-//    RCEN = 1;        /* Enable data reception */
-////        while(!BF);      /* wait for buffer full */
-//
-//
-////        for (int i = 0; i < 100; ++i);  //nop
-//    temp = SSPBUF;   /* Read serial buffer and store in temp register */
-//    SSPIF=0;
-//    I2CWait();       /* wait to check any pending transfer */
-//    return temp;     /* Return the read data from bus */
-//}
-//
-////Send full write request
-//unsigned char I2CReadOneByte(unsigned char id, unsigned char registerAddress) {
-//    I2CStart();
-//    I2CSend(id << 1);
-//    I2CSend(registerAddress);
-//   // I2CStop();
-//    I2CStart();
-//    I2CSend(id << 1 | 1);
-//    unsigned char out = I2CRead();
-//    I2CNak();
-//    I2CStop();
-//
-//    return out;
-//}
-//
-//void I2CReadRequest(unsigned char id, unsigned char registerAddress, unsigned char *data, int N) {
-//
-//    I2CStart();
-//    I2CSend(id << 1);
-//
-//    I2CSend(registerAddress);
-//
-//    I2CRestart();
-//
-//    I2CSend(id << 1 | 1);
-//
-//
-//    for (int i = 0; i < N; ++i) {
-//        data[i] = I2CRead();
-//
-//        if (i == N - 1)
-//            I2CNak();
-//        else
-//            I2CAck();
-//    }
-//
-//    I2CStop();
-//
-//
-//}
-//
-//void I2CWriteRequest(unsigned char id, unsigned char registerAddress, unsigned char *data, int N) {
-//    I2CStart();
-//    I2CSend(id << 1);
-//
-//    I2CSend(registerAddress);
-//
-//    for (int i = 0; i < N; ++i)
-//        I2CSend(data[i]);
-//
-//    I2CStop();
-//}

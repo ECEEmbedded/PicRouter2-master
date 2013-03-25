@@ -48,63 +48,45 @@ void Color_init(void)
 
 void write_register(unsigned char register_name, unsigned char register_value)
 {
-    //ack_polling(DEVICE_WRITE);
-
-    temp_buffer[0] = COLOR_ADDRESS;
-    temp_buffer[1] = register_name;
-    temp_buffer[2] = register_value;
-    FromMainHigh_sendmsg(3, MSGT_I2C_DATA, temp_buffer);
-    i2c_master_send();
-
-
+    temp_buffer[0] = register_name;
+    temp_buffer[1] = register_value;
+    
+    i2c_master_send(MSGT_I2C_DATA, 2, temp_buffer);
     //Return nothing
 }
 
-/*void ack_polling(unsigned char device_address)
+void read_register(unsigned char register_name)
 {
-    while(1)
-    {
-        if (unsigned char i2c_master_send(device_address, 8 , WRITE_sda()) == ACK) break;
-    }
-}*/
-unsigned char read_register(unsigned char register_name)
-{
-    unsigned char in_byte;
-
-    //ack_polling(DEVICE_READ);
-
-    in_byte = i2c_master_recv(COLOR_ADDRESS, register_name, 8);
-
-    return(in_byte);
+    i2c_master_request_reg(COLOR_ADDRESS, register_name, 1);
 }
 
 void color_read(void)
 {
-    unsigned char response;
-    unsigned char redL, redH, greenL, greenH,  blueL, blueH, clearL, clearH;
-
-    write_register(0x00, 0b00000001); //Get sensor reading
-
-    while(1)
-    {
-        response = read_register(0x00);
-        if (response == 0) break;
-    }
-
-    //Red
-    redL = read_register(DATA_RED_LO);
-    redH = read_register(DATA_RED_HI);
-
-    //Green
-    greenL = read_register(DATA_GREEN_LO);
-    greenH = read_register(DATA_GREEN_HI);
-
-    //Blue
-    blueL = read_register(DATA_BLUE_LO);
-    blueH = read_register(DATA_BLUE_HI);
-
-    //Clear
-    clearL = read_register(DATA_CLEAR_LO);
-    clearH = read_register(DATA_CLEAR_HI);
+//    unsigned char response;
+//    unsigned char redL, redH, greenL, greenH,  blueL, blueH, clearL, clearH;
+//
+//    write_register(0x00, 0b00000001); //Get sensor reading
+//
+//    while(1)
+//    {
+//        response = read_register(0x00);
+//        if (response == 0) break;
+//    }
+//
+//    //Red
+//    redL = read_register(DATA_RED_LO);
+//    redH = read_register(DATA_RED_HI);
+//
+//    //Green
+//    greenL = read_register(DATA_GREEN_LO);
+//    greenH = read_register(DATA_GREEN_HI);
+//
+//    //Blue
+//    blueL = read_register(DATA_BLUE_LO);
+//    blueH = read_register(DATA_BLUE_HI);
+//
+//    //Clear
+//    clearL = read_register(DATA_CLEAR_LO);
+//    clearH = read_register(DATA_CLEAR_HI);
 
 }

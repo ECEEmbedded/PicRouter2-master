@@ -88,9 +88,7 @@ Version 3.2 HI-TECH Software Intermediate Code
 [v _timer0_lthread `(i ~T0 @X0 0 ef4`*S2093`i`i`*uc ]
 "58 ../src/messages.h
 [v _ToMainLow_recvmsg `(c ~T0 @X0 0 ef3`uc`*uc`*v ]
-"26 ../src/i2cMaster.h
-[v _i2c_master_request_reg `(uc ~T0 @X0 0 ef3`uc`uc`uc ]
-"24
+"24 ../src/i2cMaster.h
 [v _i2c_master_send `(uc ~T0 @X0 0 ef3`uc`uc`*uc ]
 [; ;pic18f2680.h: 44: extern volatile unsigned char RXF6SIDH @ 0xD60;
 "46 C:\Program Files (x86)\Microchip\xc8\v1.12\include\pic18f2680.h
@@ -15175,7 +15173,7 @@ Version 3.2 HI-TECH Software Intermediate Code
 [; ;ColorSensor.h: 59: void Color_init(void);
 [; ;ColorSensor.h: 61: void ack_polling(unsigned char device_address);
 [; ;ColorSensor.h: 62: void write_register(unsigned char register_name, unsigned char register_value);
-[; ;ColorSensor.h: 63: unsigned char read_register(unsigned char register_name);
+[; ;ColorSensor.h: 63: void read_register(unsigned char register_name);
 [; ;ColorSensor.h: 64: void color_read(void);
 "53 ../src/main.c
 [p x OSC=IRCIO67 ]
@@ -15484,6 +15482,9 @@ Version 3.2 HI-TECH Software Intermediate Code
 [e :U 2133 ]
 [e $ ! == % F16535 -> 3 `i -> 1 `i 2135  ]
 {
+[; ;main.c: 356: i2c_master_recv(0x4F, 8);
+"356
+[e ( _i2c_master_recv (2 , -> -> 79 `i `uc -> -> 8 `i `uc ]
 "357
 }
 [; ;main.c: 357: } else if (currentPollDriver % 3 == 2) {
@@ -15491,9 +15492,6 @@ Version 3.2 HI-TECH Software Intermediate Code
 [e :U 2135 ]
 [e $ ! == % F16535 -> 3 `i -> 2 `i 2137  ]
 {
-[; ;main.c: 358: i2c_master_request_reg(0x74,0x40,1);
-"358
-[e ( _i2c_master_request_reg (3 , , -> -> 116 `i `uc -> -> 64 `i `uc -> -> 1 `i `uc ]
 "367
 }
 [e :U 2137 ]

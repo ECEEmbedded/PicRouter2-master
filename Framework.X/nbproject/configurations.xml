@@ -16,7 +16,7 @@
       <itemPath>../src/router.h</itemPath>
       <itemPath>../src/debug.h</itemPath>
       <itemPath>../src/i2cMaster.h</itemPath>
-      <itemPath>../../../PicRouter2-master/src/ColorSensor.h</itemPath>
+      <itemPath>../src/ColorSensor.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -42,7 +42,7 @@
       <itemPath>../src/router.c</itemPath>
       <itemPath>../src/debug.c</itemPath>
       <itemPath>../src/i2cMaster.c</itemPath>
-      <itemPath>../../../PicRouter2-master/src/ColorSensor.c</itemPath>
+      <itemPath>../src/ColorSensor.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -61,7 +61,7 @@
         <targetDevice>PIC18F2680</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
-        <platformTool>PICkit3PlatformTool</platformTool>
+        <platformTool>PICkit2PlatformTool</platformTool>
         <languageToolchain>XC8</languageToolchain>
         <languageToolchainVersion>1.12</languageToolchainVersion>
         <platform>3</platform>
@@ -147,7 +147,7 @@
       <PICkit2PlatformTool>
         <property key="pk2settings.3state" value="false"/>
         <property key="pk2settings.preserveee" value="false"/>
-        <property key="pk2settings.setvddvoltage" value="5.00"/>
+        <property key="pk2settings.setvddvoltage" value="3.3"/>
         <property key="pk2settings.userpgmexec" value="true"/>
         <property key="pk2settings.usetargetpower" value="false"/>
       </PICkit2PlatformTool>

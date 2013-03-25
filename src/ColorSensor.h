@@ -60,7 +60,7 @@ void Color_init(void);
 
 void ack_polling(unsigned char device_address);
 void write_register(unsigned char register_name, unsigned char register_value);
-unsigned char read_register(unsigned char register_name);
+void read_register(unsigned char register_name);
 void color_read(void);
 
 

@@ -1,5 +1,5 @@
 
-# 1 "../src/main.c"
+# 1 "../src/ColorSensor.c"
 
 # 44 "C:\Program Files (x86)\Microchip\xc8\v1.12\include\pic18f2680.h"
 extern volatile unsigned char RXF6SIDH @ 0xD60;
@@ -18652,6 +18652,15 @@ extern void _delaywdt(unsigned long);
 #pragma intrinsic(_delay3)
 extern void _delay3(unsigned char);
 
+# 58 "../src/ColorSensor.h"
+void boot_up(void);
+void Color_init(void);
+
+void ack_polling(unsigned char device_address);
+void write_register(unsigned char register_name, unsigned char register_value);
+void read_register(unsigned char register_name);
+void color_read(void);
+
 # 7 "C:\Program Files (x86)\Microchip\xc8\v1.12\include\stdarg.h"
 typedef void * va_list[1];
 
@@ -18715,17 +18724,18 @@ extern int vsscanf(const char *, const char *, va_list);
 extern int sprintf(char *, const char *, ...);
 extern int printf(const char *, ...);
 
-# 12 "../src/interrupts.h"
-void enable_interrupts(void);
+# 17 "../src/i2cMaster.h"
+void I2CInit(void);
 
-int in_high_int(void);
+void I2CReadRequest(unsigned char id, unsigned char registerAddress, unsigned char *data, int N);
 
-int low_int_active(void);
+void I2CWriteRequest(unsigned char id, unsigned char registerAddress, unsigned char *data, int N);
 
-int in_low_int(void);
-
-
-int in_main(void);
+void i2c_configure_master(unsigned char);
+unsigned char i2c_master_send(unsigned char adr, unsigned char,unsigned char *);
+unsigned char i2c_master_recv(unsigned char ID, unsigned char);
+unsigned char i2c_master_request_reg(unsigned char ID, unsigned char adr, unsigned char length);
+void i2c_master_int_handler();
 
 # 10 "../src/messages.h"
 typedef struct __msg {
@@ -18768,393 +18778,62 @@ signed char FromMainLow_recvmsg(unsigned char,unsigned char *,void *);
 signed char FromMainHigh_sendmsg(unsigned char,unsigned char,void *);
 signed char FromMainHigh_recvmsg(unsigned char,unsigned char *,void *);
 
-# 10 "../src/my_uart.h"
-typedef struct __uart_comm {
-unsigned char buffer[8];
-unsigned char buflen;
-unsigned char outbuffer[8];
-unsigned char outbuflen;
-unsigned char outbufind;
-} uart_comm;
+# 6 "../src/ColorSensor.c"
+unsigned char temp_buffer[4];
 
-void init_uart_snd_rcv(uart_comm *);
-void start_UART_send(unsigned char len, unsigned char * msg);
-void uart_rcv_msg_timeout(void);
-void uart_recv_int_handler(void);
-void uart_send_int_handler(void);
-
-# 1 "../src/uart_thread.h"
-typedef struct __uart_thread_struct {
-
-int data;
-} uart_thread_struct;
-
-int uart_lthread(uart_thread_struct *,int,int,unsigned char*);
-
-# 1 "../src/timer1_thread.h"
-typedef struct __timer1_thread_struct {
-
-unsigned int msgcount;
-} timer1_thread_struct;
-
-void init_timer1_lthread(timer1_thread_struct *);
-int timer1_lthread(timer1_thread_struct *,int,int,unsigned char*);
-
-# 1 "../src/timer0_thread.h"
-typedef struct __timer0_thread_struct {
-
-int data;
-} timer0_thread_struct;
-
-int timer0_lthread(timer0_thread_struct *,int,int,unsigned char*);
-
-# 17 "../src/i2cMaster.h"
-void I2CInit(void);
-
-void I2CReadRequest(unsigned char id, unsigned char registerAddress, unsigned char *data, int N);
-
-void I2CWriteRequest(unsigned char id, unsigned char registerAddress, unsigned char *data, int N);
-
-void i2c_configure_master(unsigned char);
-unsigned char i2c_master_send(unsigned char adr, unsigned char,unsigned char *);
-unsigned char i2c_master_recv(unsigned char ID, unsigned char);
-unsigned char i2c_master_request_reg(unsigned char ID, unsigned char adr, unsigned char length);
-void i2c_master_int_handler();
-
-# 16 "../src/debug.h"
-void DebugPrint(unsigned char out);
-
-# 24
-void DebugSignal();
-
-# 9 "../src/drivers.h"
-unsigned char DriverHeap[10*40];
-unsigned char *heapPointer = DriverHeap;
-unsigned char *driverMalloc(int size) {
-unsigned char *temp = heapPointer;
-
-heapPointer += size;
-
-return temp;
-}
-
-
-
-typedef struct DRIVER_T {
-unsigned char id;
-unsigned char class;
-unsigned char data[10];
-} Driver_t;
-
-typedef struct RRPACKET_T {
-unsigned char id;
-unsigned char class;
-unsigned char data[4];
-} RRPacket_t;
-
-
-typedef struct DRIVER_TABLE_ENT_T {
-unsigned char id;
-Driver_t *context;
-void (*respond)(Driver_t *, unsigned char *);
-void (*poll)(Driver_t *);
-} Driver_Table_Ent_t;
-
-Driver_Table_Ent_t DriverTable[10];
-unsigned char NumberOfDrivers = 0;
-
-# 4 "../src/Color.h"
-typedef struct DRIVERColorMEMBERS {
-unsigned char id;
-unsigned char class;
-
-
-unsigned char a;
-
-} DriverColorMembers;
-
-typedef struct DRIVERColorDATA {
-
-
-unsigned char input;
-
-} DriverColorData;
-void DriverColorInit(Driver_t *driver) {
-DriverColorMembers *self = (DriverColorMembers *)driver;
-
-self->a = 0xE;
-DebugPrint(self->a);
-
-}
-void DriverColorRespond(Driver_t *driver, unsigned char *rcvData) {
-DriverColorData *data = (DriverColorData *)rcvData;
-DriverColorMembers *self = (DriverColorMembers *)driver;
-
-start_UART_send(8, data);
-
-}
-void DriverColorPoll(Driver_t *driver) {
-DriverColorMembers *self = (DriverColorMembers *)driver;
-
-
-i2c_master_recv(self->id, 8);
-
-}
-
-void DriverColorAdd(unsigned char id) {
-Driver_t *context = (Driver_t *)driverMalloc(sizeof(Driver_t));
-context->id = id;
-context->class = 0x20;
-DriverTable[NumberOfDrivers].context = context;
-DriverTable[NumberOfDrivers].respond = DriverColorRespond;
-DriverTable[NumberOfDrivers].poll = DriverColorPoll;
-++NumberOfDrivers;
-
-DriverColorInit(context);
-}
-
-# 4 "../src/IR.h"
-typedef struct DRIVERIRMEMBERS {
-unsigned char id;
-unsigned char class;
-
-
-unsigned char a;
-
-} DriverIRMembers;
-
-typedef struct DRIVERIRDATA {
-
-
-unsigned char input;
-
-} DriverIRData;
-void DriverIRInit(Driver_t *driver) {
-DriverIRMembers *self = (DriverIRMembers *)driver;
-
-self->a = 0xE;
-DebugPrint(self->a);
-
-}
-void DriverIRRespond(Driver_t *driver, unsigned char *rcvData) {
-DriverIRData *data = (DriverIRData *)rcvData;
-DriverIRMembers *self = (DriverIRMembers *)driver;
-
-
-}
-void DriverIRPoll(Driver_t *driver) {
-DriverIRMembers *self = (DriverIRMembers *)driver;
-
-
-
-}
-
-void DriverIRAdd(unsigned char id) {
-Driver_t *context = (Driver_t *)driverMalloc(sizeof(Driver_t));
-context->id = id;
-context->class = 0x3A;
-DriverTable[NumberOfDrivers].context = context;
-DriverTable[NumberOfDrivers].respond = DriverIRRespond;
-DriverTable[NumberOfDrivers].poll = DriverIRPoll;
-++NumberOfDrivers;
-
-DriverIRInit(context);
-}
-
-# 58 "../src/ColorSensor.h"
-void boot_up(void);
-void Color_init(void);
-
-void ack_polling(unsigned char device_address);
-void write_register(unsigned char register_name, unsigned char register_value);
-void read_register(unsigned char register_name);
-void color_read(void);
-
-
-# 53 "../src/main.c"
-#pragma config OSC = IRCIO67
-#pragma config FCMEN = OFF
-#pragma config IESO = OFF
-
-
-#pragma config PWRT = OFF
-#pragma config BOREN = OFF
-#pragma config BORV = 3
-
-
-#pragma config WDT = OFF
-#pragma config WDTPS = 32768
-
-
-#pragma config PBADEN = OFF
-#pragma config LPT1OSC = OFF
-#pragma config MCLRE = ON
-
-
-#pragma config STVREN = OFF
-#pragma config LVP = OFF
-#pragma config BBSIZ = 1024
-
-# 128
-void main(void) {
-char c;
-signed char length;
-unsigned char msgtype;
-unsigned char last_reg_recvd;
-unsigned char RedL;
-uart_comm uc;
-
-unsigned char msgbuffer[10 + 1];
-unsigned char i;
-uart_thread_struct uthread_data;
-timer1_thread_struct t1thread_data;
-timer0_thread_struct t0thread_data;
-
-
-OSCCON = 0xFC;
-
-OSCTUNEbits.PLLEN = 1;
-
-# 161
-init_uart_snd_rcv(&uc);
-
-# 167
-init_timer1_lthread(&t1thread_data);
-
-
-init_queues();
-
-
-TRISA = 0x00;
-LATA = 0x00;
-
-# 186
-OpenTimer0(0b11111111 & 0b11111111 & 0b11011111 & 0b11110010);
-
-
-
-
-OpenTimer1(0b11111111 & 0b11001111 & 0b11111111 & 0b11111101 & 0b11110111 & 0b11111111);
-
-# 197
-IPR1bits.TMR1IP = 0;
-
-IPR1bits.RCIP = 0;
-IPR1bits.TXIP = 0;
-
-IPR1bits.SSPIP = 1;
-
-# 226
-PIE1bits.SSPIE = 1;
-
-# 239
-enable_interrupts();
-
-# 263
-I2CInit();
-
-# 271
-static int currentPollDriver = 0;
-while (1) {
-DebugPrint(0x00);
-
-
-
-
-block_on_To_msgqueues();
-
-# 285
-length = ToMainHigh_recvmsg(10, &msgtype, (void *) msgbuffer);
-if (length < 0) {
-
-if (length != -4) {
-
-}
-} else {
-switch (msgtype) {
-case 10:
-{
-timer0_lthread(&t0thread_data, msgtype, length, msgbuffer);
-break;
-};
-case 40:
-{
-DebugPrint(0x0C);
-
-
-
-if (msgbuffer[0] == 0x74){
-RedL = msgbuffer[2];
-}
-
-else if (msgbuffer[1] != 0 && msgbuffer[1] != 0xFF)
-start_UART_send(8, msgbuffer);
-
-# 317
-};
-case 41:
+void boot_up(void)
 {
 
+# 16
+PORTA = 0b00000000;
+TRISA = 0b00000000;
 
-last_reg_recvd = msgbuffer[0];
-break;
-};
-case 42:
-{
+PORTB = 0b00010000;
+TRISB = 0b00000100;
 
-break;
-};
-default:
-{
 
-break;
-};
-};
+
+SPBRG = 51;
+
+TXSTA = 0b00100100;
+RCSTA = 0b10010000;
+
+
 }
 
+void Color_init(void)
+{
+write_register(0x06, 0x05);
+write_register(0x07, 0x05);
+write_register(0x08, 0x05);
+write_register(0x09, 0x05);
 
-length = ToMainLow_recvmsg(10, &msgtype, (void *) msgbuffer);
-if (length < 0) {
+write_register(0x0A, 0xC4);
+write_register(0x0B, 0x09);
+write_register(0x0C, 0xC4);
+write_register(0x0D, 0x09);
+write_register(0x0E, 0xC4);
+write_register(0x0F, 0x09);
+write_register(0x10, 0xC4);
+write_register(0x11, 0x09);
+}
 
-if (length != -4) {
+void write_register(unsigned char register_name, unsigned char register_value)
+{
+temp_buffer[0] = register_name;
+temp_buffer[1] = register_value;
+
+i2c_master_send(40, 2, temp_buffer);
 
 }
-} else {
-switch (msgtype) {
-case 11:
+
+void read_register(unsigned char register_name)
+{
+i2c_master_request_reg(0x74, register_name, 1);
+}
+
+void color_read(void)
 {
 
-++currentPollDriver;
-
-
-if (currentPollDriver % 3 == 0) {
-i2c_master_recv(0x4F, 8);
-} else if (currentPollDriver % 3 == 1) {
-i2c_master_recv(0x4F, 8);
-} else if (currentPollDriver % 3 == 2) {
-
-# 367
-}
-
-# 374
-break;
-};
-
-case 30:
-case 31:
-{
-
-i2c_master_send(msgbuffer[0], 8, msgbuffer);
-
-break;
-};
-default:
-{
-
-break;
-};
-};
-}
-}
-
+# 92
 }

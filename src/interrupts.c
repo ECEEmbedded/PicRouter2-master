@@ -1,7 +1,11 @@
 #include "maindefs.h"
 #include "interrupts.h"
 #include "user_interrupts.h"
+
+
+#include "debug.h"
 #include "messages.h"
+#include "i2cMaster.h"
 
 //----------------------------------------------------------------------------
 // Note: This code for processing interrupts is configured to allow for high and
@@ -88,7 +92,7 @@ void InterruptHandlerHigh() {
         // clear the interrupt flag
         PIR1bits.SSPIF = 0;
         // call the handler
-        i2c_int_handler();
+        i2c_master_int_handler();
     }
 
     // check to see if we have an interrupt on timer 0

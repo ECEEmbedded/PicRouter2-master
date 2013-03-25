@@ -18847,7 +18847,6 @@ return(0);
 }
 
 unsigned char i2c_master_request_reg(unsigned char ID, unsigned char adr, unsigned char length) {
-DebugPrint(0x02);
 unsigned char buf[3];
 buf[0] = (ID << 1) | 0x01;
 buf[1] = adr;
@@ -18860,17 +18859,20 @@ return(0);
 
 
 void i2c_master_start_next_in_Q() {
-
-DebugPrint(0x03);
 if (i2c_p.status != I2C_FREE) {
 return;
 }
-DebugPrint(0x04);
+DebugPrint(0x02);
 unsigned char msgType;
 
 i2c_p.buflen = FromMainHigh_recvmsg(10, &msgType, i2c_p.buffer);
 
+if (i2c_p.buflen == -4) {
+return;
+}
+
 if (msgType == 47) {
+DebugPrint(0x03);
 i2c_p.buffind = 1;
 SEN = 1;
 SSPIF = 1;
@@ -18878,8 +18880,17 @@ SSPBUF = i2c_p.buffer[0];
 i2c_p.status = I2C_SENDING;
 }
 else if (msgType == 48) {
+DebugPrint(0x04);
 i2c_p.buffind = 0;
 i2c_p.buflen = i2c_p.buffer[1];
+
+DebugPrint(0x00);
+DebugPrint(0x0F);
+DebugPrint((i2c_p.buflen >> 4));
+DebugPrint(i2c_p.buflen);
+DebugPrint(0x00);
+DebugPrint(0x0F);
+
 i2c_p.status = I2C_REQUESTING;
 SEN = 1;
 }
@@ -18896,40 +18907,44 @@ SEN = 1;
 void i2c_master_int_handler() {
 switch (i2c_p.status) {
 case I2C_FREE: {
-
+DebugPrint(0x06);
+i2c_master_start_next_in_Q();
 break;
 }
 case I2C_SENDING: {
+DebugPrint(0x07);
 if (i2c_p.buffind < i2c_p.buflen ) {
 SSPBUF = i2c_p.buffer[i2c_p.buffind++];
 } else {
 i2c_p.status = I2C_FREE;
 PEN = 1;
-i2c_master_start_next_in_Q();
+
 }
 break;
 }
 case I2C_REQUESTING: {
+DebugPrint(0x08);
 SSPBUF = i2c_p.buffer[0];
 i2c_p.status = I2C_RECEIVING;
 break;
 }
 case I2C_RECEIVING: {
 if (i2c_p.buffind < i2c_p.buflen) {
+DebugPrint(0x0D);
 i2c_p.status = I2C_ACKNOWLEDGE;
 RCEN = 1;
 i2c_p.buffer[i2c_p.buffind++] = SSPBUF;
 } else {
+DebugPrint(0x0E);
 i2c_p.status = I2C_FREE;
 PEN = 1;
 
 ToMainHigh_sendmsg(i2c_p.buflen, 40, i2c_p.buffer);
-i2c_master_start_next_in_Q();
 }
 break;
 }
 case I2C_REQUESTING_REG: {
-DebugPrint(0x07);
+DebugPrint(0x0A);
 if (i2c_p.buffind >= 2) {
 SSPBUF = i2c_p.buffer[i2c_p.buffind++];
 }
@@ -18941,6 +18956,7 @@ RSEN = 1;
 break;
 }
 case I2C_ACKNOWLEDGE: {
+DebugPrint(0x0B);
 ACKEN = 1;
 if (i2c_p.buffind < i2c_p.buflen) {
 ACKDT = 0;
@@ -18953,7 +18969,7 @@ break;
 }
 }
 
-# 192
+# 208
 void I2CInit(void){
 TRISC3 = 1;
 TRISC4 = 1;
@@ -18963,4 +18979,3 @@ SSPADD = 0x28;
 
 i2c_p.status = I2C_FREE;
 }
-
