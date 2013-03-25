@@ -14,7 +14,7 @@ enum {
 
 typedef struct __i2c_master_comm {
 	unsigned char buffer[MSGLEN];
-	unsigned char	buflen;
+	signed char     buflen;
         unsigned char   buffind;
 	unsigned char event_count;
 	unsigned char status;
@@ -65,12 +65,13 @@ unsigned char i2c_master_send(unsigned char adr, unsigned char length, unsigned 
 //   is determined by the parameter passed to i2c_master_recv()].
 // The interrupt handler will be responsible for copying the message received into
 
-unsigned char i2c_master_recv(unsigned char ID, unsigned char length) {
+unsigned char i2c_master_recv(unsigned char ID, char length) {
     unsigned char buf[2];
     buf[0] = (ID << 1)  | 0x01;
-    buf[1] = length;
+    buf[1] = length+1;  // +1 is so there is room for the i2c address
     FromMainHigh_sendmsg(2,MSGT_I2C_MASTER_RECV,buf);
 
+    i2c_master_start_next_in_Q();
     i2c_master_start_next_in_Q();
 
     return(0);
@@ -92,17 +93,15 @@ void i2c_master_start_next_in_Q() {
     if (i2c_p.status != I2C_FREE) {
         return;
     }
-        DebugPrint(0x02);
+
     unsigned char msgType;
-
     i2c_p.buflen = FromMainHigh_recvmsg(MSGLEN, &msgType, i2c_p.buffer);
-
+    
     if (i2c_p.buflen == MSGQUEUE_EMPTY) {
         return;
     }
 
     if (msgType == MSGT_I2C_MASTER_SEND) {
-        DebugPrint(0x03);
         i2c_p.buffind = 1;
         SEN = 1;
         SSPIF = 1;
@@ -110,22 +109,13 @@ void i2c_master_start_next_in_Q() {
         i2c_p.status = I2C_SENDING;
     }
     else if (msgType == MSGT_I2C_MASTER_RECV) {
-        DebugPrint(0x04);
+        
         i2c_p.buffind = 0;
         i2c_p.buflen = i2c_p.buffer[1];
-
-        DebugPrint(0x00);
-        DebugPrint(0x0F);
-        DebugPrint((i2c_p.buflen >> 4));
-        DebugPrint(i2c_p.buflen);
-        DebugPrint(0x00);
-        DebugPrint(0x0F);
-        
         i2c_p.status = I2C_REQUESTING;
         SEN = 1;
     }
     else if (msgType == MSGT_I2C_MASTER_REQUEST_REG) {
-        DebugPrint(0x05);
         i2c_p.buffind = 0;
         i2c_p.buflen = i2c_p.buffer[2];
         i2c_p.status = I2C_REQUESTING_REG;
@@ -137,12 +127,10 @@ void i2c_master_start_next_in_Q() {
 void i2c_master_int_handler() {
     switch (i2c_p.status) {
         case I2C_FREE: {
-        DebugPrint(0x06);
             i2c_master_start_next_in_Q();
             break;
         }
         case I2C_SENDING: {
-        DebugPrint(0x07);
             if (i2c_p.buffind < i2c_p.buflen/* && !SSPCON2bits.ACKSTAT*/) {
                     SSPBUF = i2c_p.buffer[i2c_p.buffind++];
                 } else {    // we have nothing left to send
@@ -153,40 +141,36 @@ void i2c_master_int_handler() {
             break;
         }
         case I2C_REQUESTING: {
-        DebugPrint(0x08);
-            SSPBUF = i2c_p.buffer[0];
+            SSPBUF = i2c_p.buffer[i2c_p.buffind++];
             i2c_p.status = I2C_RECEIVING;
             break;
         }
         case I2C_RECEIVING: {
             if (i2c_p.buffind < i2c_p.buflen) {
-        DebugPrint(0x0D);
                 i2c_p.status = I2C_ACKNOWLEDGE;
                 RCEN = 1;
                 i2c_p.buffer[i2c_p.buffind++] = SSPBUF;
             } else {    // we have nothing left to send
-        DebugPrint(0x0E);
                 i2c_p.status = I2C_FREE;
                 PEN = 1;
-
+                DebugPrint(i2c_p.buflen);
                 ToMainHigh_sendmsg(i2c_p.buflen, MSGT_I2C_DATA, i2c_p.buffer);
             }
             break;
         }
         case I2C_REQUESTING_REG: {
-            DebugPrint(0x0A);
             if (i2c_p.buffind >= 2) {
                 SSPBUF = i2c_p.buffer[i2c_p.buffind++];
             }
             else {
                 i2c_p.buffind = 0;
-                i2c_p.status = I2C_RECEIVING;
+                i2c_p.buffer[0] = i2c_p.buffer[0] & 0xFE;
+                i2c_p.status = I2C_REQUESTING;
                 RSEN = 1;
             }
             break;
         }
         case I2C_ACKNOWLEDGE: {
-        DebugPrint(0x0B);
             ACKEN = 1;
             if (i2c_p.buffind < i2c_p.buflen) {
                 ACKDT = 0;

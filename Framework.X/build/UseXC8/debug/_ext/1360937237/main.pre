@@ -18967,11 +18967,11 @@ void Color_init(void);
 
 void ack_polling(unsigned char device_address);
 void write_register(unsigned char register_name, unsigned char register_value);
-unsigned char read_register(unsigned char register_name);
+void read_register(unsigned char register_name);
 void color_read(void);
 
 
-# 51 "../src/main.c"
+# 53 "../src/main.c"
 #pragma config OSC = IRCIO67
 #pragma config FCMEN = OFF
 #pragma config IESO = OFF
@@ -18995,7 +18995,7 @@ void color_read(void);
 #pragma config LVP = OFF
 #pragma config BBSIZ = 1024
 
-# 126
+# 128
 void main(void) {
 char c;
 signed char length;
@@ -19015,10 +19015,10 @@ OSCCON = 0xFC;
 
 OSCTUNEbits.PLLEN = 1;
 
-# 159
+# 161
 init_uart_snd_rcv(&uc);
 
-# 165
+# 167
 init_timer1_lthread(&t1thread_data);
 
 
@@ -19028,7 +19028,7 @@ init_queues();
 TRISA = 0x00;
 LATA = 0x00;
 
-# 184
+# 186
 OpenTimer0(0b11111111 & 0b11111111 & 0b11011111 & 0b11110010);
 
 
@@ -19036,32 +19036,34 @@ OpenTimer0(0b11111111 & 0b11111111 & 0b11011111 & 0b11110010);
 
 OpenTimer1(0b11111111 & 0b11001111 & 0b11111111 & 0b11111101 & 0b11110111 & 0b11111111);
 
-# 195
+# 197
 IPR1bits.TMR1IP = 0;
 
 IPR1bits.RCIP = 0;
+IPR1bits.TXIP = 0;
 
 IPR1bits.SSPIP = 1;
 
-# 223
+# 226
 PIE1bits.SSPIE = 1;
 
-# 236
+# 239
 enable_interrupts();
 
-# 260
+# 263
 I2CInit();
 
-# 268
+# 271
 static int currentPollDriver = 0;
 while (1) {
+DebugPrint(0x00);
 
 
 
 
 block_on_To_msgqueues();
 
-# 281
+# 285
 length = ToMainHigh_recvmsg(10, &msgtype, (void *) msgbuffer);
 if (length < 0) {
 
@@ -19077,6 +19079,7 @@ break;
 };
 case 40:
 {
+DebugPrint(0x0C);
 
 
 
@@ -19087,7 +19090,7 @@ RedL = msgbuffer[2];
 else if (msgbuffer[1] != 0 && msgbuffer[1] != 0xFF)
 start_UART_send(8, msgbuffer);
 
-# 312
+# 317
 };
 case 41:
 {
@@ -19120,24 +19123,20 @@ if (length != -4) {
 switch (msgtype) {
 case 11:
 {
-LATAbits.LA0 = !LATAbits.LA0;
 
 ++currentPollDriver;
 
 
 if (currentPollDriver % 3 == 0) {
 i2c_master_recv(0x4F, 8);
+} else if (currentPollDriver % 3 == 1) {
+i2c_master_recv(0x4F, 8);
 } else if (currentPollDriver % 3 == 2) {
 
-} else if (currentPollDriver % 3 == 3) {
-LATAbits.LA1 = !LATAbits.LA1;
-i2c_master_request_reg(0x74,0x40,1 );
-
-# 364
+# 367
 }
 
-# 370
-timer1_lthread(&t1thread_data, msgtype, length, msgbuffer);
+# 374
 break;
 };
 

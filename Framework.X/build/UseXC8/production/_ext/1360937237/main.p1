@@ -2,10 +2,10 @@ Version 3.2 HI-TECH Software Intermediate Code
 [s S2095 `uc 1 `uc 1 `uc -> 10 `i ]
 [n S2095 DRIVER_T id class data ]
 "37 ../src/drivers.h
-[v F16440 `(v ~T0 @X0 0 tf2`*S2095`*uc ]
+[v F16445 `(v ~T0 @X0 0 tf2`*S2095`*uc ]
 "38
-[v F16444 `(v ~T0 @X0 0 tf1`*S2095 ]
-[s S2097 `uc 1 `*S2095 1 `*F16440 1 `*F16444 1 ]
+[v F16449 `(v ~T0 @X0 0 tf1`*S2095 ]
+[s S2097 `uc 1 `*S2095 1 `*F16445 1 `*F16449 1 ]
 [n S2097 DRIVER_TABLE_ENT_T id context respond poll ]
 [s S2098 `uc 1 `uc 1 `uc 1 ]
 [n S2098 DRIVERColorMEMBERS id class a ]
@@ -14906,7 +14906,9 @@ Version 3.2 HI-TECH Software Intermediate Code
 [; ;i2cMaster.h: 26: unsigned char i2c_master_request_reg(unsigned char ID, unsigned char adr, unsigned char length);
 [; ;i2cMaster.h: 27: void i2c_master_int_handler();
 [; ;debug.h: 16: void DebugPrint(unsigned char out);
-[; ;debug.h: 24: void DebugSignal();
+[; ;debug.h: 20: void DebugPrintByte(unsigned char out);
+[; ;debug.h: 22: void DebugPrintString(unsigned char *msg, unsigned char len);
+[; ;debug.h: 30: void DebugSignal();
 "9 ../src/drivers.h
 [v _DriverHeap `uc ~T0 @X0 * -> 10 `i -> 40 `i e ]
 [; ;drivers.h: 9: unsigned char DriverHeap[10*40];
@@ -15291,8 +15293,8 @@ Version 3.2 HI-TECH Software Intermediate Code
 "263
 [e ( _I2CInit ..  ]
 "271
-[v F16535 `i ~T0 @X0 1 s currentPollDriver ]
-[i F16535
+[v F16540 `i ~T0 @X0 1 s currentPollDriver ]
+[i F16540
 -> 0 `i
 ]
 [; ;main.c: 271: static int currentPollDriver = 0;
@@ -15352,74 +15354,71 @@ Version 3.2 HI-TECH Software Intermediate Code
 [; ;main.c: 299: {
 "299
 {
-[; ;main.c: 300: DebugPrint(0x0C);
-"300
-[e ( _DebugPrint (1 -> -> 12 `i `uc ]
-[; ;main.c: 304: if (msgbuffer[0] == 0x74){
-"304
-[e $ ! == -> *U + &U _msgbuffer * -> -> -> 0 `i `ui `ux -> -> # *U &U _msgbuffer `ui `ux `i -> 116 `i 2121  ]
+[; ;main.c: 303: if ((msgbuffer[0] >> 1) == 0x74){
+"303
+[e $ ! == >> -> *U + &U _msgbuffer * -> -> -> 0 `i `ui `ux -> -> # *U &U _msgbuffer `ui `ux `i -> 1 `i -> 116 `i 2121  ]
 {
-[; ;main.c: 305: RedL = msgbuffer[2];
-"305
+[; ;main.c: 304: RedL = msgbuffer[2];
+"304
 [e = _RedL *U + &U _msgbuffer * -> -> -> 2 `i `ui `ux -> -> # *U &U _msgbuffer `ui `ux ]
-"306
+"305
 }
-[; ;main.c: 306: }
+[; ;main.c: 305: }
 [e $U 2122  ]
-"308
+"307
 [e :U 2121 ]
-[; ;main.c: 308: else if (msgbuffer[1] != 0 && msgbuffer[1] != 0xFF)
-[e $ ! && != -> *U + &U _msgbuffer * -> -> -> 1 `i `ui `ux -> -> # *U &U _msgbuffer `ui `ux `i -> 0 `i != -> *U + &U _msgbuffer * -> -> -> 1 `i `ui `ux -> -> # *U &U _msgbuffer `ui `ux `i -> 255 `i 2123  ]
-[; ;main.c: 309: start_UART_send(8, msgbuffer);
-"309
-[e ( _start_UART_send (2 , -> -> 8 `i `uc &U _msgbuffer ]
+[; ;main.c: 307: else if (msgbuffer[2] != 0 && msgbuffer[2] != 0xFF)
+[e $ ! && != -> *U + &U _msgbuffer * -> -> -> 2 `i `ui `ux -> -> # *U &U _msgbuffer `ui `ux `i -> 0 `i != -> *U + &U _msgbuffer * -> -> -> 2 `i `ui `ux -> -> # *U &U _msgbuffer `ui `ux `i -> 255 `i 2123  ]
+[; ;main.c: 308: start_UART_send(8, msgbuffer+2);
+"308
+[e ( _start_UART_send (2 , -> -> 8 `i `uc + &U _msgbuffer * -> -> 2 `i `x -> -> # *U &U _msgbuffer `i `x ]
 [e :U 2123 ]
-"317
+"316
 [e :U 2122 ]
 }
-[; ;main.c: 317: };
-[; ;main.c: 318: case 41:
-"318
+[; ;main.c: 316: };
+[; ;main.c: 317: case 41:
+"317
 [e :U 2124 ]
-[; ;main.c: 319: {
-"319
+[; ;main.c: 318: {
+"318
 {
-[; ;main.c: 322: last_reg_recvd = msgbuffer[0];
-"322
+[; ;main.c: 321: last_reg_recvd = msgbuffer[0];
+"321
 [e = _last_reg_recvd *U + &U _msgbuffer * -> -> -> 0 `i `ui `ux -> -> # *U &U _msgbuffer `ui `ux ]
-[; ;main.c: 323: break;
+[; ;main.c: 322: break;
+"322
+[e $U 2117  ]
 "323
-[e $U 2117  ]
+}
+[; ;main.c: 323: };
+[; ;main.c: 324: case 42:
 "324
-}
-[; ;main.c: 324: };
-[; ;main.c: 325: case 42:
-"325
 [e :U 2125 ]
-[; ;main.c: 326: {
-"326
+[; ;main.c: 325: {
+"325
 {
-[; ;main.c: 328: break;
+[; ;main.c: 327: break;
+"327
+[e $U 2117  ]
 "328
-[e $U 2117  ]
-"329
 }
-[; ;main.c: 329: };
-[; ;main.c: 330: default:
-"330
+[; ;main.c: 328: };
+[; ;main.c: 329: default:
+"329
 [e :U 2126 ]
-[; ;main.c: 331: {
-"331
+[; ;main.c: 330: {
+"330
 {
-[; ;main.c: 333: break;
-"333
+[; ;main.c: 332: break;
+"332
 [e $U 2117  ]
+"333
+}
+[; ;main.c: 333: };
 "334
 }
 [; ;main.c: 334: };
-"335
-}
-[; ;main.c: 335: };
 [e $U 2117  ]
 "292
 [e :U 2118 ]
@@ -15428,136 +15427,136 @@ Version 3.2 HI-TECH Software Intermediate Code
  , $ -> -> 41 `i `uc 2124
  , $ -> -> 42 `i `uc 2125
  2126 ]
-"335
+"334
 [e :U 2117 ]
-"336
+"335
 }
 [e :U 2116 ]
-[; ;main.c: 336: }
-[; ;main.c: 339: length = ToMainLow_recvmsg(10, &msgtype, (void *) msgbuffer);
-"339
+[; ;main.c: 335: }
+[; ;main.c: 338: length = ToMainLow_recvmsg(10, &msgtype, (void *) msgbuffer);
+"338
 [e = _length ( _ToMainLow_recvmsg (3 , , -> -> 10 `i `uc &U _msgtype -> &U _msgbuffer `*v ]
-[; ;main.c: 340: if (length < 0) {
-"340
+[; ;main.c: 339: if (length < 0) {
+"339
 [e $ ! < -> _length `i -> 0 `i 2127  ]
 {
-[; ;main.c: 342: if (length != -4) {
-"342
+[; ;main.c: 341: if (length != -4) {
+"341
 [e $ ! != -> _length `i -U -> 4 `i 2128  ]
 {
-"344
+"343
 }
 [e :U 2128 ]
-"345
+"344
 }
-[; ;main.c: 344: }
-[; ;main.c: 345: } else {
+[; ;main.c: 343: }
+[; ;main.c: 344: } else {
 [e $U 2129  ]
 [e :U 2127 ]
 {
-[; ;main.c: 346: switch (msgtype) {
-"346
+[; ;main.c: 345: switch (msgtype) {
+"345
 [e $U 2131  ]
 {
-[; ;main.c: 347: case 11:
-"347
+[; ;main.c: 346: case 11:
+"346
 [e :U 2132 ]
-[; ;main.c: 348: {
-"348
+[; ;main.c: 347: {
+"347
 {
-[; ;main.c: 350: ++currentPollDriver;
-"350
-[e =+ F16535 -> 1 `i ]
-[; ;main.c: 353: if (currentPollDriver % 3 == 0) {
+[; ;main.c: 349: ++currentPollDriver;
+"349
+[e =+ F16540 -> 1 `i ]
+[; ;main.c: 352: if (currentPollDriver % 3 == 0) {
+"352
+[e $ ! == % F16540 -> 3 `i -> 0 `i 2133  ]
+{
+[; ;main.c: 353: i2c_master_recv(0x4F, 8);
 "353
-[e $ ! == % F16535 -> 3 `i -> 0 `i 2133  ]
-{
-[; ;main.c: 354: i2c_master_recv(0x4F, 8);
-"354
 [e ( _i2c_master_recv (2 , -> -> 79 `i `uc -> -> 8 `i `uc ]
-"355
+"354
 }
-[; ;main.c: 355: } else if (currentPollDriver % 3 == 1) {
+[; ;main.c: 354: } else if (currentPollDriver % 3 == 1) {
 [e $U 2134  ]
 [e :U 2133 ]
-[e $ ! == % F16535 -> 3 `i -> 1 `i 2135  ]
+[e $ ! == % F16540 -> 3 `i -> 1 `i 2135  ]
 {
-[; ;main.c: 356: i2c_master_recv(0x4F, 8);
-"356
+[; ;main.c: 355: i2c_master_recv(0x4F, 8);
+"355
 [e ( _i2c_master_recv (2 , -> -> 79 `i `uc -> -> 8 `i `uc ]
-"357
+"356
 }
-[; ;main.c: 357: } else if (currentPollDriver % 3 == 2) {
+[; ;main.c: 356: } else if (currentPollDriver % 3 == 2) {
 [e $U 2136  ]
 [e :U 2135 ]
-[e $ ! == % F16535 -> 3 `i -> 2 `i 2137  ]
+[e $ ! == % F16540 -> 3 `i -> 2 `i 2137  ]
 {
-"367
+"366
 }
 [e :U 2137 ]
-"374
+"368
 [e :U 2136 ]
 [e :U 2134 ]
-[; ;main.c: 367: }
-[; ;main.c: 374: break;
+[; ;main.c: 366: }
+[; ;main.c: 368: break;
 [e $U 2130  ]
-"375
+"369
 }
-[; ;main.c: 375: };
-[; ;main.c: 377: case 30:
-"377
+[; ;main.c: 369: };
+[; ;main.c: 371: case 30:
+"371
 [e :U 2138 ]
-"378
+"372
 [e :U 2139 ]
-[; ;main.c: 378: case 31:
-[; ;main.c: 379: {
-"379
+[; ;main.c: 372: case 31:
+[; ;main.c: 373: {
+"373
 {
-[; ;main.c: 381: i2c_master_send(msgbuffer[0], 8, msgbuffer);
-"381
+[; ;main.c: 375: i2c_master_send(msgbuffer[0], 8, msgbuffer);
+"375
 [e ( _i2c_master_send (3 , , *U + &U _msgbuffer * -> -> -> 0 `i `ui `ux -> -> # *U &U _msgbuffer `ui `ux -> -> 8 `i `uc &U _msgbuffer ]
-[; ;main.c: 383: break;
-"383
+[; ;main.c: 377: break;
+"377
 [e $U 2130  ]
+"378
+}
+[; ;main.c: 378: };
+[; ;main.c: 379: default:
+"379
+[e :U 2140 ]
+[; ;main.c: 380: {
+"380
+{
+[; ;main.c: 382: break;
+"382
+[e $U 2130  ]
+"383
+}
+[; ;main.c: 383: };
 "384
 }
 [; ;main.c: 384: };
-[; ;main.c: 385: default:
-"385
-[e :U 2140 ]
-[; ;main.c: 386: {
-"386
-{
-[; ;main.c: 388: break;
-"388
 [e $U 2130  ]
-"389
-}
-[; ;main.c: 389: };
-"390
-}
-[; ;main.c: 390: };
-[e $U 2130  ]
-"346
+"345
 [e :U 2131 ]
 [e [\ _msgtype , $ -> -> 11 `i `uc 2132
  , $ -> -> 30 `i `uc 2138
  , $ -> -> 31 `i `uc 2139
  2140 ]
-"390
+"384
 [e :U 2130 ]
-"391
+"385
 }
 [e :U 2129 ]
-"392
+"386
 }
 [e :U 2111 ]
 "272
 [e $U 2112  ]
 [e :U 2113 ]
-[; ;main.c: 391: }
-[; ;main.c: 392: }
-[; ;main.c: 394: }
-"394
+[; ;main.c: 385: }
+[; ;main.c: 386: }
+[; ;main.c: 388: }
+"388
 [e :UE 2110 ]
 }

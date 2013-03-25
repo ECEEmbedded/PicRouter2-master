@@ -17953,5 +17953,5 @@ void DebugSignal();
 void DebugPrint(unsigned char out) {
 
 
-LATA = out;
+LATA = out & 0x0F;
 }

@@ -1,44 +1,24 @@
 Version 3.2 HI-TECH Software Intermediate Code
-[s S2091 `uc -> 10 `i `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 `uc 1 ]
-[n S2091 __i2c_master_comm buffer buflen buffind event_count status error_code error_count ]
-"78 ../src/messages.h
-[v _FromMainHigh_sendmsg `(c ~T0 @X0 0 ef3`uc`uc`*v ]
-"27 ../src/i2cMaster.c
-[v _i2c_master_start_next_in_Q `(v ~T0 @X0 0 ef ]
-[c E16388 0 1 2 3 4 5 .. ]
-[n E16388 . I2C_FREE I2C_SENDING I2C_REQUESTING I2C_RECEIVING I2C_REQUESTING_REG I2C_ACKNOWLEDGE  ]
-"16 ../src/debug.h
-[v _DebugPrint `(v ~T0 @X0 0 ef1`uc ]
-"79 ../src/messages.h
-[v _FromMainHigh_recvmsg `(c ~T0 @X0 0 ef3`uc`*uc`*v ]
-"37991 C:\Program Files (x86)\Microchip\xc8\v1.12\include\pic18f2680.h
-[v _SEN `Vb ~T0 @X0 0 e@32296 ]
-"38019
-[v _SSPIF `Vb ~T0 @X0 0 e@31987 ]
-"32335
-[v _SSPBUF `Vuc ~T0 @X0 0 e@4041 ]
-"36187
-[v _PEN `Vb ~T0 @X0 0 e@32298 ]
-"36275
-[v _RCEN `Vb ~T0 @X0 0 e@32299 ]
-"64 ../src/messages.h
-[v _ToMainHigh_sendmsg `(c ~T0 @X0 0 ef3`uc`uc`*v ]
-"36329 C:\Program Files (x86)\Microchip\xc8\v1.12\include\pic18f2680.h
-[v _RSEN `Vb ~T0 @X0 0 e@32297 ]
-"33921
-[v _ACKEN `Vb ~T0 @X0 0 e@32300 ]
-"33919
-[v _ACKDT `Vb ~T0 @X0 0 e@32301 ]
-"38231
-[v _TRISC3 `Vb ~T0 @X0 0 e@31907 ]
-"38233
-[v _TRISC4 `Vb ~T0 @X0 0 e@31908 ]
-"32063
-[v _SSPSTAT `Vuc ~T0 @X0 0 e@4039 ]
-"31994
-[v _SSPCON1 `Vuc ~T0 @X0 0 e@4038 ]
-"32329
-[v _SSPADD `Vuc ~T0 @X0 0 e@4040 ]
+"27998 C:\Program Files (x86)\Microchip\xc8\v1.12\include\pic18f2680.h
+[v _PORTA `Vuc ~T0 @X0 0 e@3968 ]
+"29176
+[v _TRISA `Vuc ~T0 @X0 0 e@3986 ]
+"28202
+[v _PORTB `Vuc ~T0 @X0 0 e@3969 ]
+"29397
+[v _TRISB `Vuc ~T0 @X0 0 e@3987 ]
+"31139
+[v _SPBRG `Vuc ~T0 @X0 0 e@4015 ]
+"30854
+[v _TXSTA `Vuc ~T0 @X0 0 e@4012 ]
+"30697
+[v _RCSTA `Vuc ~T0 @X0 0 e@4011 ]
+"62 ../src/ColorSensor.h
+[v _write_register `(v ~T0 @X0 0 ef2`uc`uc ]
+"24 ../src/i2cMaster.h
+[v _i2c_master_send `(uc ~T0 @X0 0 ef3`uc`uc`*uc ]
+"26
+[v _i2c_master_request_reg `(uc ~T0 @X0 0 ef3`uc`uc`uc ]
 [; ;pic18f2680.h: 44: extern volatile unsigned char RXF6SIDH @ 0xD60;
 "46 C:\Program Files (x86)\Microchip\xc8\v1.12\include\pic18f2680.h
 [; ;pic18f2680.h: 46: asm("RXF6SIDH equ 0D60h");
@@ -14764,6 +14744,12 @@ Version 3.2 HI-TECH Software Intermediate Code
 [; ;pic18.h: 144: extern void _delay(unsigned long);
 [; ;pic18.h: 146: extern void _delaywdt(unsigned long);
 [; ;pic18.h: 148: extern void _delay3(unsigned char);
+[; ;ColorSensor.h: 58: void boot_up(void);
+[; ;ColorSensor.h: 59: void Color_init(void);
+[; ;ColorSensor.h: 61: void ack_polling(unsigned char device_address);
+[; ;ColorSensor.h: 62: void write_register(unsigned char register_name, unsigned char register_value);
+[; ;ColorSensor.h: 63: void read_register(unsigned char register_name);
+[; ;ColorSensor.h: 64: void color_read(void);
 [; ;stdarg.h: 7: typedef void * va_list[1];
 [; ;stdarg.h: 10: extern void * __va_start(void);
 [; ;stdarg.h: 13: extern void * __va_arg(void *, ...);
@@ -14824,551 +14810,133 @@ Version 3.2 HI-TECH Software Intermediate Code
 [; ;messages.h: 72: signed char FromMainLow_recvmsg(unsigned char,unsigned char *,void *);
 [; ;messages.h: 78: signed char FromMainHigh_sendmsg(unsigned char,unsigned char,void *);
 [; ;messages.h: 79: signed char FromMainHigh_recvmsg(unsigned char,unsigned char *,void *);
-[; ;my_i2c.h: 7: typedef struct __i2c_comm {
-[; ;my_i2c.h: 8: unsigned char buffer[10];
-[; ;my_i2c.h: 9: unsigned char buflen;
-[; ;my_i2c.h: 10: unsigned char event_count;
-[; ;my_i2c.h: 11: unsigned char status;
-[; ;my_i2c.h: 12: unsigned char error_code;
-[; ;my_i2c.h: 13: unsigned char error_count;
-[; ;my_i2c.h: 14: unsigned char outbuffer[10];
-[; ;my_i2c.h: 15: unsigned char outbuflen;
-[; ;my_i2c.h: 16: unsigned char outbufind;
-[; ;my_i2c.h: 17: unsigned char slave_addr;
-[; ;my_i2c.h: 18: } i2c_comm;
-[; ;my_i2c.h: 32: void init_i2c(i2c_comm *);
-[; ;my_i2c.h: 33: void i2c_int_handler(void);
-[; ;my_i2c.h: 34: void start_i2c_slave_reply(unsigned char,unsigned char *);
-[; ;my_i2c.h: 35: void i2c_configure_slave(unsigned char);
-[; ;debug.h: 16: void DebugPrint(unsigned char out);
-[; ;debug.h: 24: void DebugSignal();
-[; ;i2cMaster.c: 6: enum {
-[; ;i2cMaster.c: 7: I2C_FREE,
-[; ;i2cMaster.c: 8: I2C_SENDING,
-[; ;i2cMaster.c: 9: I2C_REQUESTING,
-[; ;i2cMaster.c: 10: I2C_RECEIVING,
-[; ;i2cMaster.c: 11: I2C_REQUESTING_REG,
-[; ;i2cMaster.c: 12: I2C_ACKNOWLEDGE
-[; ;i2cMaster.c: 13: };
-[; ;i2cMaster.c: 15: typedef struct __i2c_master_comm {
-[; ;i2cMaster.c: 16: unsigned char buffer[10];
-[; ;i2cMaster.c: 17: unsigned char buflen;
-[; ;i2cMaster.c: 18: unsigned char buffind;
-[; ;i2cMaster.c: 19: unsigned char event_count;
-[; ;i2cMaster.c: 20: unsigned char status;
-[; ;i2cMaster.c: 21: unsigned char error_code;
-[; ;i2cMaster.c: 22: unsigned char error_count;
-[; ;i2cMaster.c: 23: } i2c_master_comm;
-"25 ../src/i2cMaster.c
-[v _i2c_p `S2091 ~T0 @X0 1 s ]
-[; ;i2cMaster.c: 25: static i2c_master_comm i2c_p;
-[; ;i2cMaster.c: 27: void i2c_master_start_next_in_Q(void);
-"41
-[v _i2c_master_send `(uc ~T0 @X0 1 ef3`uc`uc`*uc ]
+"6 ../src/ColorSensor.c
+[v _temp_buffer `uc ~T0 @X0 -> 4 `i e ]
+[; ;ColorSensor.c: 6: unsigned char temp_buffer[4];
+"9
+[v _boot_up `(v ~T0 @X0 1 ef ]
 {
-[; ;i2cMaster.c: 41: unsigned char i2c_master_send(unsigned char adr, unsigned char length, unsigned char *msg) {
-[e :U _i2c_master_send ]
-[v _adr `uc ~T0 @X0 1 r1 ]
-[v _length `uc ~T0 @X0 1 r2 ]
-[v _msg `*uc ~T0 @X0 1 r3 ]
+[; ;ColorSensor.c: 8: void boot_up(void)
+[; ;ColorSensor.c: 9: {
+[e :U _boot_up ]
 [f ]
+[; ;ColorSensor.c: 16: PORTA = 0b00000000;
+"16
+[e = _PORTA -> -> 0 `i `uc ]
+[; ;ColorSensor.c: 17: TRISA = 0b00000000;
+"17
+[e = _TRISA -> -> 0 `i `uc ]
+[; ;ColorSensor.c: 19: PORTB = 0b00010000;
+"19
+[e = _PORTB -> -> 16 `i `uc ]
+[; ;ColorSensor.c: 20: TRISB = 0b00000100;
+"20
+[e = _TRISB -> -> 4 `i `uc ]
+[; ;ColorSensor.c: 24: SPBRG = 51;
+"24
+[e = _SPBRG -> -> 51 `i `uc ]
+[; ;ColorSensor.c: 26: TXSTA = 0b00100100;
+"26
+[e = _TXSTA -> -> 36 `i `uc ]
+[; ;ColorSensor.c: 27: RCSTA = 0b10010000;
+"27
+[e = _RCSTA -> -> 144 `i `uc ]
+[; ;ColorSensor.c: 30: }
+"30
+[e :UE 2090 ]
+}
+"33
+[v _Color_init `(v ~T0 @X0 1 ef ]
+{
+[; ;ColorSensor.c: 32: void Color_init(void)
+[; ;ColorSensor.c: 33: {
+[e :U _Color_init ]
+[f ]
+[; ;ColorSensor.c: 34: write_register(0x06, 0x05);
+"34
+[e ( _write_register (2 , -> -> 6 `i `uc -> -> 5 `i `uc ]
+[; ;ColorSensor.c: 35: write_register(0x07, 0x05);
+"35
+[e ( _write_register (2 , -> -> 7 `i `uc -> -> 5 `i `uc ]
+[; ;ColorSensor.c: 36: write_register(0x08, 0x05);
+"36
+[e ( _write_register (2 , -> -> 8 `i `uc -> -> 5 `i `uc ]
+[; ;ColorSensor.c: 37: write_register(0x09, 0x05);
+"37
+[e ( _write_register (2 , -> -> 9 `i `uc -> -> 5 `i `uc ]
+[; ;ColorSensor.c: 39: write_register(0x0A, 0xC4);
+"39
+[e ( _write_register (2 , -> -> 10 `i `uc -> -> 196 `i `uc ]
+[; ;ColorSensor.c: 40: write_register(0x0B, 0x09);
+"40
+[e ( _write_register (2 , -> -> 11 `i `uc -> -> 9 `i `uc ]
+[; ;ColorSensor.c: 41: write_register(0x0C, 0xC4);
+"41
+[e ( _write_register (2 , -> -> 12 `i `uc -> -> 196 `i `uc ]
+[; ;ColorSensor.c: 42: write_register(0x0D, 0x09);
 "42
-[v _msgbuf `uc ~T0 @X0 -> 10 `i a ]
-[; ;i2cMaster.c: 42: unsigned char msgbuf[10];
-[; ;i2cMaster.c: 43: msgbuf[0] = (adr << 1);
+[e ( _write_register (2 , -> -> 13 `i `uc -> -> 9 `i `uc ]
+[; ;ColorSensor.c: 43: write_register(0x0E, 0xC4);
 "43
-[e = *U + &U _msgbuf * -> -> -> 0 `i `ui `ux -> -> # *U &U _msgbuf `ui `ux -> << -> _adr `i -> 1 `i `uc ]
+[e ( _write_register (2 , -> -> 14 `i `uc -> -> 196 `i `uc ]
+[; ;ColorSensor.c: 44: write_register(0x0F, 0x09);
 "44
-[v _i `i ~T0 @X0 1 a ]
-[; ;i2cMaster.c: 44: int i;
-[; ;i2cMaster.c: 45: for (i = 0; i < length; ++i) {
+[e ( _write_register (2 , -> -> 15 `i `uc -> -> 9 `i `uc ]
+[; ;ColorSensor.c: 45: write_register(0x10, 0xC4);
 "45
-{
-[e = _i -> 0 `i ]
-[e $U 2096  ]
-[e :U 2093 ]
-{
-[; ;i2cMaster.c: 46: msgbuf[i+1] = msg[i];
+[e ( _write_register (2 , -> -> 16 `i `uc -> -> 196 `i `uc ]
+[; ;ColorSensor.c: 46: write_register(0x11, 0x09);
 "46
-[e = *U + &U _msgbuf * -> -> + _i -> 1 `i `ui `ux -> -> # *U &U _msgbuf `ui `ux *U + _msg * -> _i `x -> -> # *U _msg `i `x ]
+[e ( _write_register (2 , -> -> 17 `i `uc -> -> 9 `i `uc ]
+[; ;ColorSensor.c: 47: }
 "47
+[e :UE 2091 ]
 }
-"45
-[e =+ _i -> 1 `i ]
-[e :U 2096 ]
-[e $ < _i -> _length `i 2093  ]
-[e :U 2094 ]
-"47
-}
-[; ;i2cMaster.c: 47: }
-[; ;i2cMaster.c: 48: FromMainHigh_sendmsg(length+1, 47, msgbuf);
-"48
-[e ( _FromMainHigh_sendmsg (3 , , -> + -> _length `i -> 1 `i `uc -> -> 47 `i `uc -> &U _msgbuf `*v ]
-[; ;i2cMaster.c: 50: i2c_master_start_next_in_Q();
 "50
-[e ( _i2c_master_start_next_in_Q ..  ]
-[; ;i2cMaster.c: 52: return 0;
+[v _write_register `(v ~T0 @X0 1 ef2`uc`uc ]
+{
+[; ;ColorSensor.c: 49: void write_register(unsigned char register_name, unsigned char register_value)
+[; ;ColorSensor.c: 50: {
+[e :U _write_register ]
+[v _register_name `uc ~T0 @X0 1 r1 ]
+[v _register_value `uc ~T0 @X0 1 r2 ]
+[f ]
+[; ;ColorSensor.c: 51: temp_buffer[0] = register_name;
+"51
+[e = *U + &U _temp_buffer * -> -> -> 0 `i `ui `ux -> -> # *U &U _temp_buffer `ui `ux _register_name ]
+[; ;ColorSensor.c: 52: temp_buffer[1] = register_value;
 "52
-[e ) -> -> 0 `i `uc ]
-[e $UE 2092  ]
-[; ;i2cMaster.c: 53: }
-"53
+[e = *U + &U _temp_buffer * -> -> -> 1 `i `ui `ux -> -> # *U &U _temp_buffer `ui `ux _register_value ]
+[; ;ColorSensor.c: 54: i2c_master_send(40, 2, temp_buffer);
+"54
+[e ( _i2c_master_send (3 , , -> -> 40 `i `uc -> -> 2 `i `uc &U _temp_buffer ]
+[; ;ColorSensor.c: 56: }
+"56
 [e :UE 2092 ]
 }
-"68
-[v _i2c_master_recv `(uc ~T0 @X0 1 ef2`uc`uc ]
+"59
+[v _read_register `(v ~T0 @X0 1 ef1`uc ]
 {
-[; ;i2cMaster.c: 68: unsigned char i2c_master_recv(unsigned char ID, unsigned char length) {
-[e :U _i2c_master_recv ]
-[v _ID `uc ~T0 @X0 1 r1 ]
-[v _length `uc ~T0 @X0 1 r2 ]
+[; ;ColorSensor.c: 58: void read_register(unsigned char register_name)
+[; ;ColorSensor.c: 59: {
+[e :U _read_register ]
+[v _register_name `uc ~T0 @X0 1 r1 ]
 [f ]
-"69
-[v _buf `uc ~T0 @X0 -> 2 `i a ]
-[; ;i2cMaster.c: 69: unsigned char buf[2];
-[; ;i2cMaster.c: 70: buf[0] = (ID << 1) | 0x01;
-"70
-[e = *U + &U _buf * -> -> -> 0 `i `ui `ux -> -> # *U &U _buf `ui `ux -> | << -> _ID `i -> 1 `i -> 1 `i `uc ]
-[; ;i2cMaster.c: 71: buf[1] = length;
-"71
-[e = *U + &U _buf * -> -> -> 1 `i `ui `ux -> -> # *U &U _buf `ui `ux _length ]
-[; ;i2cMaster.c: 72: FromMainHigh_sendmsg(2,48,buf);
-"72
-[e ( _FromMainHigh_sendmsg (3 , , -> -> 2 `i `uc -> -> 48 `i `uc -> &U _buf `*v ]
-[; ;i2cMaster.c: 74: i2c_master_start_next_in_Q();
-"74
-[e ( _i2c_master_start_next_in_Q ..  ]
-[; ;i2cMaster.c: 76: return(0);
-"76
-[e ) -> -> 0 `i `uc ]
-[e $UE 2097  ]
-[; ;i2cMaster.c: 77: }
-"77
-[e :UE 2097 ]
+[; ;ColorSensor.c: 60: i2c_master_request_reg(0x74, register_name, 1);
+"60
+[e ( _i2c_master_request_reg (3 , , -> -> 116 `i `uc _register_name -> -> 1 `i `uc ]
+[; ;ColorSensor.c: 61: }
+"61
+[e :UE 2093 ]
 }
-"79
-[v _i2c_master_request_reg `(uc ~T0 @X0 1 ef3`uc`uc`uc ]
+"64
+[v _color_read `(v ~T0 @X0 1 ef ]
 {
-[; ;i2cMaster.c: 79: unsigned char i2c_master_request_reg(unsigned char ID, unsigned char adr, unsigned char length) {
-[e :U _i2c_master_request_reg ]
-[v _ID `uc ~T0 @X0 1 r1 ]
-[v _adr `uc ~T0 @X0 1 r2 ]
-[v _length `uc ~T0 @X0 1 r3 ]
+[; ;ColorSensor.c: 63: void color_read(void)
+[; ;ColorSensor.c: 64: {
+[e :U _color_read ]
 [f ]
-"80
-[v _buf `uc ~T0 @X0 -> 3 `i a ]
-[; ;i2cMaster.c: 80: unsigned char buf[3];
-[; ;i2cMaster.c: 81: buf[0] = (ID << 1) | 0x01;
-"81
-[e = *U + &U _buf * -> -> -> 0 `i `ui `ux -> -> # *U &U _buf `ui `ux -> | << -> _ID `i -> 1 `i -> 1 `i `uc ]
-[; ;i2cMaster.c: 82: buf[1] = adr;
-"82
-[e = *U + &U _buf * -> -> -> 1 `i `ui `ux -> -> # *U &U _buf `ui `ux _adr ]
-[; ;i2cMaster.c: 83: buf[2] = length;
-"83
-[e = *U + &U _buf * -> -> -> 2 `i `ui `ux -> -> # *U &U _buf `ui `ux _length ]
-[; ;i2cMaster.c: 84: FromMainHigh_sendmsg(3,49,buf);
-"84
-[e ( _FromMainHigh_sendmsg (3 , , -> -> 3 `i `uc -> -> 49 `i `uc -> &U _buf `*v ]
-[; ;i2cMaster.c: 85: i2c_master_start_next_in_Q();
-"85
-[e ( _i2c_master_start_next_in_Q ..  ]
-[; ;i2cMaster.c: 87: return(0);
-"87
-[e ) -> -> 0 `i `uc ]
-[e $UE 2098  ]
-[; ;i2cMaster.c: 88: }
-"88
-[e :UE 2098 ]
-}
-"91
-[v _i2c_master_start_next_in_Q `(v ~T0 @X0 1 ef ]
-{
-[; ;i2cMaster.c: 91: void i2c_master_start_next_in_Q() {
-[e :U _i2c_master_start_next_in_Q ]
-[f ]
-[; ;i2cMaster.c: 92: if (i2c_p.status != I2C_FREE) {
+[; ;ColorSensor.c: 92: }
 "92
-[e $ ! != -> . _i2c_p 4 `i -> . `E16388 0 `i 2100  ]
-{
-[; ;i2cMaster.c: 93: return;
-"93
-[e $UE 2099  ]
-"94
-}
-[e :U 2100 ]
-[; ;i2cMaster.c: 94: }
-[; ;i2cMaster.c: 95: DebugPrint(0x02);
-"95
-[e ( _DebugPrint (1 -> -> 2 `i `uc ]
-"96
-[v _msgType `uc ~T0 @X0 1 a ]
-[; ;i2cMaster.c: 96: unsigned char msgType;
-[; ;i2cMaster.c: 98: i2c_p.buflen = FromMainHigh_recvmsg(10, &msgType, i2c_p.buffer);
-"98
-[e = . _i2c_p 1 -> ( _FromMainHigh_recvmsg (3 , , -> -> 10 `i `uc &U _msgType -> &U . _i2c_p 0 `*v `uc ]
-[; ;i2cMaster.c: 100: if (i2c_p.buflen == -4) {
-"100
-[e $ ! == -> . _i2c_p 1 `i -U -> 4 `i 2101  ]
-{
-[; ;i2cMaster.c: 101: return;
-"101
-[e $UE 2099  ]
-"102
-}
-[e :U 2101 ]
-[; ;i2cMaster.c: 102: }
-[; ;i2cMaster.c: 104: if (msgType == 47) {
-"104
-[e $ ! == -> _msgType `i -> 47 `i 2102  ]
-{
-[; ;i2cMaster.c: 105: DebugPrint(0x03);
-"105
-[e ( _DebugPrint (1 -> -> 3 `i `uc ]
-[; ;i2cMaster.c: 106: i2c_p.buffind = 1;
-"106
-[e = . _i2c_p 2 -> -> 1 `i `uc ]
-[; ;i2cMaster.c: 107: SEN = 1;
-"107
-[e = _SEN -> -> 1 `i `b ]
-[; ;i2cMaster.c: 108: SSPIF = 1;
-"108
-[e = _SSPIF -> -> 1 `i `b ]
-[; ;i2cMaster.c: 109: SSPBUF = i2c_p.buffer[0];
-"109
-[e = _SSPBUF *U + &U . _i2c_p 0 * -> -> -> 0 `i `ui `ux -> -> # *U &U . _i2c_p 0 `ui `ux ]
-[; ;i2cMaster.c: 110: i2c_p.status = I2C_SENDING;
-"110
-[e = . _i2c_p 4 -> . `E16388 1 `uc ]
-"111
-}
-[; ;i2cMaster.c: 111: }
-[e $U 2103  ]
-"112
-[e :U 2102 ]
-[; ;i2cMaster.c: 112: else if (msgType == 48) {
-[e $ ! == -> _msgType `i -> 48 `i 2104  ]
-{
-[; ;i2cMaster.c: 113: DebugPrint(0x04);
-"113
-[e ( _DebugPrint (1 -> -> 4 `i `uc ]
-[; ;i2cMaster.c: 114: i2c_p.buffind = 0;
-"114
-[e = . _i2c_p 2 -> -> 0 `i `uc ]
-[; ;i2cMaster.c: 115: i2c_p.buflen = i2c_p.buffer[1];
-"115
-[e = . _i2c_p 1 *U + &U . _i2c_p 0 * -> -> -> 1 `i `ui `ux -> -> # *U &U . _i2c_p 0 `ui `ux ]
-[; ;i2cMaster.c: 117: DebugPrint(0x00);
-"117
-[e ( _DebugPrint (1 -> -> 0 `i `uc ]
-[; ;i2cMaster.c: 118: DebugPrint(0x0F);
-"118
-[e ( _DebugPrint (1 -> -> 15 `i `uc ]
-[; ;i2cMaster.c: 119: DebugPrint((i2c_p.buflen >> 4));
-"119
-[e ( _DebugPrint (1 -> >> -> . _i2c_p 1 `i -> 4 `i `uc ]
-[; ;i2cMaster.c: 120: DebugPrint(i2c_p.buflen);
-"120
-[e ( _DebugPrint (1 . _i2c_p 1 ]
-[; ;i2cMaster.c: 121: DebugPrint(0x00);
-"121
-[e ( _DebugPrint (1 -> -> 0 `i `uc ]
-[; ;i2cMaster.c: 122: DebugPrint(0x0F);
-"122
-[e ( _DebugPrint (1 -> -> 15 `i `uc ]
-[; ;i2cMaster.c: 124: i2c_p.status = I2C_REQUESTING;
-"124
-[e = . _i2c_p 4 -> . `E16388 2 `uc ]
-[; ;i2cMaster.c: 125: SEN = 1;
-"125
-[e = _SEN -> -> 1 `i `b ]
-"126
-}
-[; ;i2cMaster.c: 126: }
-[e $U 2105  ]
-"127
-[e :U 2104 ]
-[; ;i2cMaster.c: 127: else if (msgType == 49) {
-[e $ ! == -> _msgType `i -> 49 `i 2106  ]
-{
-[; ;i2cMaster.c: 128: DebugPrint(0x05);
-"128
-[e ( _DebugPrint (1 -> -> 5 `i `uc ]
-[; ;i2cMaster.c: 129: i2c_p.buffind = 0;
-"129
-[e = . _i2c_p 2 -> -> 0 `i `uc ]
-[; ;i2cMaster.c: 130: i2c_p.buflen = i2c_p.buffer[2];
-"130
-[e = . _i2c_p 1 *U + &U . _i2c_p 0 * -> -> -> 2 `i `ui `ux -> -> # *U &U . _i2c_p 0 `ui `ux ]
-[; ;i2cMaster.c: 131: i2c_p.status = I2C_REQUESTING_REG;
-"131
-[e = . _i2c_p 4 -> . `E16388 4 `uc ]
-[; ;i2cMaster.c: 132: SEN = 1;
-"132
-[e = _SEN -> -> 1 `i `b ]
-"133
-}
-[e :U 2106 ]
-"134
-[e :U 2105 ]
-[e :U 2103 ]
-[; ;i2cMaster.c: 133: }
-[; ;i2cMaster.c: 134: }
-[e :UE 2099 ]
-}
-"137
-[v _i2c_master_int_handler `(v ~T0 @X0 1 ef ]
-{
-[; ;i2cMaster.c: 137: void i2c_master_int_handler() {
-[e :U _i2c_master_int_handler ]
-[f ]
-[; ;i2cMaster.c: 138: switch (i2c_p.status) {
-"138
-[e $U 2109  ]
-{
-[; ;i2cMaster.c: 139: case I2C_FREE: {
-"139
-[e :U 2110 ]
-{
-[; ;i2cMaster.c: 140: DebugPrint(0x06);
-"140
-[e ( _DebugPrint (1 -> -> 6 `i `uc ]
-[; ;i2cMaster.c: 141: i2c_master_start_next_in_Q();
-"141
-[e ( _i2c_master_start_next_in_Q ..  ]
-[; ;i2cMaster.c: 142: break;
-"142
-[e $U 2108  ]
-"143
-}
-[; ;i2cMaster.c: 143: }
-[; ;i2cMaster.c: 144: case I2C_SENDING: {
-"144
-[e :U 2111 ]
-{
-[; ;i2cMaster.c: 145: DebugPrint(0x07);
-"145
-[e ( _DebugPrint (1 -> -> 7 `i `uc ]
-[; ;i2cMaster.c: 146: if (i2c_p.buffind < i2c_p.buflen ) {
-"146
-[e $ ! < -> . _i2c_p 2 `i -> . _i2c_p 1 `i 2112  ]
-{
-[; ;i2cMaster.c: 147: SSPBUF = i2c_p.buffer[i2c_p.buffind++];
-"147
-[e = _SSPBUF *U + &U . _i2c_p 0 * -> ++ . _i2c_p 2 -> -> 1 `i `uc `ux -> -> # *U &U . _i2c_p 0 `ui `ux ]
-"148
-}
-[; ;i2cMaster.c: 148: } else {
-[e $U 2113  ]
-[e :U 2112 ]
-{
-[; ;i2cMaster.c: 149: i2c_p.status = I2C_FREE;
-"149
-[e = . _i2c_p 4 -> . `E16388 0 `uc ]
-[; ;i2cMaster.c: 150: PEN = 1;
-"150
-[e = _PEN -> -> 1 `i `b ]
-"152
-}
-[e :U 2113 ]
-[; ;i2cMaster.c: 152: }
-[; ;i2cMaster.c: 153: break;
-"153
-[e $U 2108  ]
-"154
-}
-[; ;i2cMaster.c: 154: }
-[; ;i2cMaster.c: 155: case I2C_REQUESTING: {
-"155
-[e :U 2114 ]
-{
-[; ;i2cMaster.c: 156: DebugPrint(0x08);
-"156
-[e ( _DebugPrint (1 -> -> 8 `i `uc ]
-[; ;i2cMaster.c: 157: SSPBUF = i2c_p.buffer[0];
-"157
-[e = _SSPBUF *U + &U . _i2c_p 0 * -> -> -> 0 `i `ui `ux -> -> # *U &U . _i2c_p 0 `ui `ux ]
-[; ;i2cMaster.c: 158: i2c_p.status = I2C_RECEIVING;
-"158
-[e = . _i2c_p 4 -> . `E16388 3 `uc ]
-[; ;i2cMaster.c: 159: break;
-"159
-[e $U 2108  ]
-"160
-}
-[; ;i2cMaster.c: 160: }
-[; ;i2cMaster.c: 161: case I2C_RECEIVING: {
-"161
-[e :U 2115 ]
-{
-[; ;i2cMaster.c: 162: if (i2c_p.buffind < i2c_p.buflen) {
-"162
-[e $ ! < -> . _i2c_p 2 `i -> . _i2c_p 1 `i 2116  ]
-{
-[; ;i2cMaster.c: 163: DebugPrint(0x0D);
-"163
-[e ( _DebugPrint (1 -> -> 13 `i `uc ]
-[; ;i2cMaster.c: 164: i2c_p.status = I2C_ACKNOWLEDGE;
-"164
-[e = . _i2c_p 4 -> . `E16388 5 `uc ]
-[; ;i2cMaster.c: 165: RCEN = 1;
-"165
-[e = _RCEN -> -> 1 `i `b ]
-[; ;i2cMaster.c: 166: i2c_p.buffer[i2c_p.buffind++] = SSPBUF;
-"166
-[e = *U + &U . _i2c_p 0 * -> ++ . _i2c_p 2 -> -> 1 `i `uc `ux -> -> # *U &U . _i2c_p 0 `ui `ux _SSPBUF ]
-"167
-}
-[; ;i2cMaster.c: 167: } else {
-[e $U 2117  ]
-[e :U 2116 ]
-{
-[; ;i2cMaster.c: 168: DebugPrint(0x0E);
-"168
-[e ( _DebugPrint (1 -> -> 14 `i `uc ]
-[; ;i2cMaster.c: 169: i2c_p.status = I2C_FREE;
-"169
-[e = . _i2c_p 4 -> . `E16388 0 `uc ]
-[; ;i2cMaster.c: 170: PEN = 1;
-"170
-[e = _PEN -> -> 1 `i `b ]
-[; ;i2cMaster.c: 172: ToMainHigh_sendmsg(i2c_p.buflen, 40, i2c_p.buffer);
-"172
-[e ( _ToMainHigh_sendmsg (3 , , . _i2c_p 1 -> -> 40 `i `uc -> &U . _i2c_p 0 `*v ]
-"173
-}
-[e :U 2117 ]
-[; ;i2cMaster.c: 173: }
-[; ;i2cMaster.c: 174: break;
-"174
-[e $U 2108  ]
-"175
-}
-[; ;i2cMaster.c: 175: }
-[; ;i2cMaster.c: 176: case I2C_REQUESTING_REG: {
-"176
-[e :U 2118 ]
-{
-[; ;i2cMaster.c: 177: DebugPrint(0x0A);
-"177
-[e ( _DebugPrint (1 -> -> 10 `i `uc ]
-[; ;i2cMaster.c: 178: if (i2c_p.buffind >= 2) {
-"178
-[e $ ! >= -> . _i2c_p 2 `i -> 2 `i 2119  ]
-{
-[; ;i2cMaster.c: 179: SSPBUF = i2c_p.buffer[i2c_p.buffind++];
-"179
-[e = _SSPBUF *U + &U . _i2c_p 0 * -> ++ . _i2c_p 2 -> -> 1 `i `uc `ux -> -> # *U &U . _i2c_p 0 `ui `ux ]
-"180
-}
-[; ;i2cMaster.c: 180: }
-[e $U 2120  ]
-"181
-[e :U 2119 ]
-[; ;i2cMaster.c: 181: else {
-{
-[; ;i2cMaster.c: 182: i2c_p.buffind = 0;
-"182
-[e = . _i2c_p 2 -> -> 0 `i `uc ]
-[; ;i2cMaster.c: 183: i2c_p.status = I2C_RECEIVING;
-"183
-[e = . _i2c_p 4 -> . `E16388 3 `uc ]
-[; ;i2cMaster.c: 184: RSEN = 1;
-"184
-[e = _RSEN -> -> 1 `i `b ]
-"185
-}
-[e :U 2120 ]
-[; ;i2cMaster.c: 185: }
-[; ;i2cMaster.c: 186: break;
-"186
-[e $U 2108  ]
-"187
-}
-[; ;i2cMaster.c: 187: }
-[; ;i2cMaster.c: 188: case I2C_ACKNOWLEDGE: {
-"188
-[e :U 2121 ]
-{
-[; ;i2cMaster.c: 189: DebugPrint(0x0B);
-"189
-[e ( _DebugPrint (1 -> -> 11 `i `uc ]
-[; ;i2cMaster.c: 190: ACKEN = 1;
-"190
-[e = _ACKEN -> -> 1 `i `b ]
-[; ;i2cMaster.c: 191: if (i2c_p.buffind < i2c_p.buflen) {
-"191
-[e $ ! < -> . _i2c_p 2 `i -> . _i2c_p 1 `i 2122  ]
-{
-[; ;i2cMaster.c: 192: ACKDT = 0;
-"192
-[e = _ACKDT -> -> 0 `i `b ]
-"193
-}
-[; ;i2cMaster.c: 193: } else {
-[e $U 2123  ]
-[e :U 2122 ]
-{
-[; ;i2cMaster.c: 194: ACKDT = 1;
-"194
-[e = _ACKDT -> -> 1 `i `b ]
-"195
-}
-[e :U 2123 ]
-[; ;i2cMaster.c: 195: }
-[; ;i2cMaster.c: 196: i2c_p.status = I2C_RECEIVING;
-"196
-[e = . _i2c_p 4 -> . `E16388 3 `uc ]
-[; ;i2cMaster.c: 197: break;
-"197
-[e $U 2108  ]
-"198
-}
-"199
-}
-[; ;i2cMaster.c: 198: }
-[; ;i2cMaster.c: 199: }
-[e $U 2108  ]
-"138
-[e :U 2109 ]
-[e [\ . _i2c_p 4 , $ -> . `E16388 0 `uc 2110
- , $ -> . `E16388 1 `uc 2111
- , $ -> . `E16388 2 `uc 2114
- , $ -> . `E16388 3 `uc 2115
- , $ -> . `E16388 4 `uc 2118
- , $ -> . `E16388 5 `uc 2121
- 2108 ]
-"199
-[e :U 2108 ]
-[; ;i2cMaster.c: 200: }
-"200
-[e :UE 2107 ]
-}
-"208
-[v _I2CInit `(v ~T0 @X0 1 ef ]
-{
-[; ;i2cMaster.c: 208: void I2CInit(void){
-[e :U _I2CInit ]
-[f ]
-[; ;i2cMaster.c: 209: TRISC3 = 1;
-"209
-[e = _TRISC3 -> -> 1 `i `b ]
-[; ;i2cMaster.c: 210: TRISC4 = 1;
-"210
-[e = _TRISC4 -> -> 1 `i `b ]
-[; ;i2cMaster.c: 211: SSPSTAT |= 0x80;
-"211
-[e =| _SSPSTAT -> -> 128 `i `uc ]
-[; ;i2cMaster.c: 212: SSPCON1 = 0x28;
-"212
-[e = _SSPCON1 -> -> 40 `i `uc ]
-[; ;i2cMaster.c: 213: SSPADD = 0x28;
-"213
-[e = _SSPADD -> -> 40 `i `uc ]
-[; ;i2cMaster.c: 215: i2c_p.status = I2C_FREE;
-"215
-[e = . _i2c_p 4 -> . `E16388 0 `uc ]
-[; ;i2cMaster.c: 216: }
-"216
-[e :UE 2124 ]
+[e :UE 2094 ]
 }

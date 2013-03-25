@@ -297,16 +297,15 @@ void main(void) {
                 };
                 case MSGT_I2C_DATA:
                 {
-        DebugPrint(0x0C);
                   //IR Sensor
                   //unsigned char *msg = msgbuffer+1;
                   //0 means no data is available and 0xFF means that there is an error (No connection`)
-                  if (msgbuffer[0] == COLOR_ADDRESS){
+                  if ((msgbuffer[0] >> 1) == COLOR_ADDRESS){
                      RedL = msgbuffer[2];
                   }
 
-                  else if (msgbuffer[1] != 0 && msgbuffer[1] != 0xFF)
-                    start_UART_send(8, msgbuffer);
+                  else if (msgbuffer[2] != 0 && msgbuffer[2] != 0xFF)
+                    start_UART_send(8, msgbuffer+2);
                     
                     // ++currentPollDriver;
                     // 
@@ -365,11 +364,6 @@ void main(void) {
 //                        i2c_master_request_reg(COLOR_ADDRESS,DATA_CLEAR_HI,1/*color adr, reg2 adr, length (probably 1)*/);
 
                     }
-
-//                    msgbuffer[0] = 0x10;
-//                    msgbuffer[1] = 0x5A;
-//                    i2c_master_send(0x4F, 1, msgbuffer);
-                    //i2c_master_recv(0x4F, 0x10, 8);
                     //timer1_lthread(&t1thread_data, msgtype, length, msgbuffer);
                     break;
                 };

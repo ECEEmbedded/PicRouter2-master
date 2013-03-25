@@ -14182,9 +14182,9 @@ Version 3.2 HI-TECH Software Intermediate Code
 [e :U _DebugPrint ]
 [v _out `uc ~T0 @X0 1 r1 ]
 [f ]
-[; ;debug.c: 6: LATA = out;
+[; ;debug.c: 6: LATA = out & 0x0F;
 "6
-[e = _LATA _out ]
+[e = _LATA -> & -> _out `i -> 15 `i `uc ]
 [; ;debug.c: 7: }
 "7
 [e :UE 2055 ]

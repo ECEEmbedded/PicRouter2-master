@@ -18811,7 +18811,13 @@ extern int printf(const char *, ...);
 # 16 "../src/debug.h"
 void DebugPrint(unsigned char out);
 
-# 24
+
+
+void DebugPrintByte(unsigned char out);
+
+void DebugPrintString(unsigned char *msg, unsigned char len);
+
+# 30
 void DebugSignal();
 
 # 17 "../src/i2cMaster.h"

@@ -15,6 +15,12 @@
  */
 void DebugPrint(unsigned char out);
 
+// Prints 0x0, upper nibble, lower nibble, 0x0F.
+// The 0 and F are to surround it for ease in spotting on the logic analizer
+void DebugPrintByte(unsigned char out);
+
+void DebugPrintString(unsigned char *msg, unsigned char len);
+
 /*
  * ##################################################
  * DebugSignal

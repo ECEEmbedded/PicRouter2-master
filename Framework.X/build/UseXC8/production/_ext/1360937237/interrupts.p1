@@ -14866,7 +14866,9 @@ Version 3.2 HI-TECH Software Intermediate Code
 [; ;stdio.h: 205: extern int sprintf(char *, const char *, ...);
 [; ;stdio.h: 206: extern int printf(const char *, ...);
 [; ;debug.h: 16: void DebugPrint(unsigned char out);
-[; ;debug.h: 24: void DebugSignal();
+[; ;debug.h: 20: void DebugPrintByte(unsigned char out);
+[; ;debug.h: 22: void DebugPrintString(unsigned char *msg, unsigned char len);
+[; ;debug.h: 30: void DebugSignal();
 [; ;i2cMaster.h: 17: void I2CInit(void);
 [; ;i2cMaster.h: 19: void I2CReadRequest(unsigned char id, unsigned char registerAddress, unsigned char *data, int N);
 [; ;i2cMaster.h: 21: void I2CWriteRequest(unsigned char id, unsigned char registerAddress, unsigned char *data, int N);
@@ -14999,8 +15001,8 @@ Version 3.2 HI-TECH Software Intermediate Code
 [e :UE 2100 ]
 }
 "87
-[v F16421 `(v ~T0 @X0 1 tf ]
-[v _InterruptHandlerHigh `IF16421 ~T0 @X0 1 e ]
+[v F16426 `(v ~T0 @X0 1 tf ]
+[v _InterruptHandlerHigh `IF16426 ~T0 @X0 1 e ]
 {
 [; ;interrupts.c: 82: interrupt
 [; ;interrupts.c: 87: void InterruptHandlerHigh() {
@@ -15042,8 +15044,8 @@ Version 3.2 HI-TECH Software Intermediate Code
 [e :UE 2103 ]
 }
 "130
-[v F16423 `(v ~T0 @X0 1 tf ]
-[v _InterruptHandlerLow `ILF16423 ~T0 @X0 1 e ]
+[v F16428 `(v ~T0 @X0 1 tf ]
+[v _InterruptHandlerLow `ILF16428 ~T0 @X0 1 e ]
 {
 [; ;interrupts.c: 125: interrupt low_priority
 [; ;interrupts.c: 130: void InterruptHandlerLow() {

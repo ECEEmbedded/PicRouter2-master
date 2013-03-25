@@ -3,30 +3,6 @@ Version 3.2 HI-TECH Software Intermediate Code
 [v _uart_rcv_msg_timeout `(v ~T0 @X0 0 ef ]
 "121 C:\Program Files (x86)\Microchip\xc8\v1.12\include\plib\timers.h
 [v _WriteTimer0 `(v ~T0 @X0 0 ef1`ui ]
-[s S1811 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
-[n S1811 . LATB0 LATB1 LATB2 LATB3 LATB4 LATB5 LATB6 LATB7 ]
-[s S1812 :1 `uc 1 ]
-[n S1812 . LB0 ]
-[s S1813 :1 `uc 1 :1 `uc 1 ]
-[n S1813 . . LB1 ]
-[s S1814 :2 `uc 1 :1 `uc 1 ]
-[n S1814 . . LB2 ]
-[s S1815 :3 `uc 1 :1 `uc 1 ]
-[n S1815 . . LB3 ]
-[s S1816 :4 `uc 1 :1 `uc 1 ]
-[n S1816 . . LB4 ]
-[s S1817 :5 `uc 1 :1 `uc 1 ]
-[n S1817 . . LB5 ]
-[s S1818 :6 `uc 1 :1 `uc 1 ]
-[n S1818 . . LB6 ]
-[s S1819 :7 `uc 1 :1 `uc 1 ]
-[n S1819 . . LB7 ]
-[u S1810 `S1811 1 `S1812 1 `S1813 1 `S1814 1 `S1815 1 `S1816 1 `S1817 1 `S1818 1 `S1819 1 ]
-[n S1810 . . . . . . . . . . ]
-"28960 C:\Program Files (x86)\Microchip\xc8\v1.12\include\pic18f2680.h
-[v _LATBbits `VS1810 ~T0 @X0 0 e@3978 ]
-"238 C:\Program Files (x86)\Microchip\xc8\v1.12\include\plib\timers.h
-[v _ReadTimer1 `(ui ~T0 @X0 0 ef ]
 "57 ../src/messages.h
 [v _ToMainLow_sendmsg `(c ~T0 @X0 0 ef3`uc`uc`*v ]
 "239 C:\Program Files (x86)\Microchip\xc8\v1.12\include\plib\timers.h
@@ -14833,12 +14809,6 @@ Version 3.2 HI-TECH Software Intermediate Code
 "29
 [v _result `ui ~T0 @X0 1 a ]
 [; ;user_interrupts.c: 29: unsigned int result;
-[; ;user_interrupts.c: 33: LATBbits.LATB1 = !LATBbits.LATB1;
-"33
-[e = . . _LATBbits 0 1 -> -> ! != -> . . _LATBbits 0 1 `i -> -> -> 0 `i `Vuc `i `i `uc ]
-[; ;user_interrupts.c: 36: result = ReadTimer1();
-"36
-[e = _result ( _ReadTimer1 ..  ]
 [; ;user_interrupts.c: 37: ToMainLow_sendmsg(0, 11, (void *) 0);
 "37
 [e ( _ToMainLow_sendmsg (3 , , -> -> 0 `i `uc -> -> 11 `i `uc -> -> 0 `i `*v ]

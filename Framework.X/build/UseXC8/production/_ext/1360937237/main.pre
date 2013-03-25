@@ -18824,7 +18824,13 @@ void i2c_master_int_handler();
 # 16 "../src/debug.h"
 void DebugPrint(unsigned char out);
 
-# 24
+
+
+void DebugPrintByte(unsigned char out);
+
+void DebugPrintString(unsigned char *msg, unsigned char len);
+
+# 30
 void DebugSignal();
 
 # 9 "../src/drivers.h"
@@ -19079,18 +19085,17 @@ break;
 };
 case 40:
 {
-DebugPrint(0x0C);
 
 
 
-if (msgbuffer[0] == 0x74){
+if ((msgbuffer[0] >> 1) == 0x74){
 RedL = msgbuffer[2];
 }
 
-else if (msgbuffer[1] != 0 && msgbuffer[1] != 0xFF)
-start_UART_send(8, msgbuffer);
+else if (msgbuffer[2] != 0 && msgbuffer[2] != 0xFF)
+start_UART_send(8, msgbuffer+2);
 
-# 317
+# 316
 };
 case 41:
 {
@@ -19133,10 +19138,9 @@ i2c_master_recv(0x4F, 8);
 i2c_master_recv(0x4F, 8);
 } else if (currentPollDriver % 3 == 2) {
 
-# 367
+# 366
 }
 
-# 374
 break;
 };
 
