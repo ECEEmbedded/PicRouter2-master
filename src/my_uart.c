@@ -4,9 +4,9 @@
 #include <timers.h>
 #else
 #include <plib/usart.h>
-#include <plib/timers.h>
 #endif
 #include "my_uart.h"
+#include "debug.h"
 
 static uart_comm *uc_ptr;
 
@@ -24,42 +24,30 @@ void start_UART_send(unsigned char len, unsigned char * msg) {
 #endif
 }
 
-void uart_rcv_msg_timeout(void) {
-    uc_ptr->buflen = 0;
-}
-
-
+static int a = 0;
 void uart_recv_int_handler() {
-#ifdef __USE18F26J50
-    if (DataRdy1USART()) {
-        uc_ptr->buffer[uc_ptr->buflen] = Read1USART();
-#else
     if (DataRdyUSART()) {
-        uc_ptr->buffer[uc_ptr->buflen] = ReadUSART();
-#endif
+    int errs = RCSTA;
 
-        // reset timer0
-        WriteTimer0(0);
+        uc_ptr->buffer[uc_ptr->buflen] = RCREG;
 
+        INTCONbits.PEIE = 1;
         uc_ptr->buflen++;
-        // check if a message should be sent
+
+        DebugPrint(a);
+        a = !a;
         if (uc_ptr->buflen == MAXUARTBUF) {
             ToMainLow_sendmsg(uc_ptr->buflen, MSGT_UART_DATA, (void *) uc_ptr->buffer);
             uc_ptr->buflen = 0;
-        }
-    }
-#ifdef __USE18F26J50
-    if (USART1_Status.OVERRUN_ERROR == 1) {
-#else
-    if (USART_Status.OVERRUN_ERROR == 1) {
-#endif
-        // we've overrun the USART and must reset
-        // send an error message for this
+         };
+
+         if (errs & 1) {
         RCSTAbits.CREN = 0;
         RCSTAbits.CREN = 1;
-        ToMainLow_sendmsg(0, MSGT_OVERRUN, (void *) 0);
+        };
     }
 }
+
 
 void init_uart_snd_rcv(uart_comm *uc) {
     INTCONbits.PEIE = 1;
@@ -78,6 +66,9 @@ void init_uart_snd_rcv(uart_comm *uc) {
     SPBRG = 0x65;
     TXSTAbits.SYNC = 0;
     RCSTAbits.SPEN = 1;
+    CREN = 1;
+
+    RCIE = 1;;
 }
 
 

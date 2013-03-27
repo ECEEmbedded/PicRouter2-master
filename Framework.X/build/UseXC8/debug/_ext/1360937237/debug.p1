@@ -1,5 +1,5 @@
 Version 3.2 HI-TECH Software Intermediate Code
-"28780 C:\Program Files (x86)\Microchip\xc8\v1.12\include\pic18f2680.h
+"28780 /Applications/microchip/xc8/v1.12/include/pic18f2680.h
 [v _LATA `Vuc ~T0 @X0 0 e@3977 ]
 [; ;stdio.h: 8: typedef int ptrdiff_t;
 [; ;stdio.h: 9: typedef unsigned size_t;
@@ -35,7 +35,7 @@ Version 3.2 HI-TECH Software Intermediate Code
 [; ;stdio.h: 205: extern int sprintf(char *, const char *, ...);
 [; ;stdio.h: 206: extern int printf(const char *, ...);
 [; ;pic18f2680.h: 44: extern volatile unsigned char RXF6SIDH @ 0xD60;
-"46 C:\Program Files (x86)\Microchip\xc8\v1.12\include\pic18f2680.h
+"46 /Applications/microchip/xc8/v1.12/include/pic18f2680.h
 [; ;pic18f2680.h: 46: asm("RXF6SIDH equ 0D60h");
 [; <" RXF6SIDH equ 0D60h ;# ">
 [; ;pic18f2680.h: 49: typedef union {
@@ -14174,7 +14174,9 @@ Version 3.2 HI-TECH Software Intermediate Code
 [; ;timers.h: 394: void WriteTimer3 ( unsigned int timer3);
 [; ;timers.h: 1179: void SetTmrCCPSrc( unsigned char );
 [; ;debug.h: 16: void DebugPrint(unsigned char out);
-[; ;debug.h: 24: void DebugSignal();
+[; ;debug.h: 20: void DebugPrintByte(unsigned char out);
+[; ;debug.h: 22: void DebugPrintString(unsigned char *msg, unsigned char len);
+[; ;debug.h: 30: void DebugSignal();
 "3 ../src/debug.c
 [v _DebugPrint `(v ~T0 @X0 1 ef1`uc ]
 {
@@ -14188,4 +14190,76 @@ Version 3.2 HI-TECH Software Intermediate Code
 [; ;debug.c: 7: }
 "7
 [e :UE 2055 ]
+}
+"9
+[v _DebugPrintByte `(v ~T0 @X0 1 ef1`uc ]
+{
+[; ;debug.c: 9: void DebugPrintByte(unsigned char out) {
+[e :U _DebugPrintByte ]
+[v _out `uc ~T0 @X0 1 r1 ]
+[f ]
+"10
+[v _tmpH `uc ~T0 @X0 1 a ]
+[; ;debug.c: 10: unsigned char tmpH = (out >> 4) & 0x0F;
+[e = _tmpH -> & >> -> _out `i -> 4 `i -> 15 `i `uc ]
+"11
+[v _tmpL `uc ~T0 @X0 1 a ]
+[; ;debug.c: 11: unsigned char tmpL = out & 0x0F;
+[e = _tmpL -> & -> _out `i -> 15 `i `uc ]
+[; ;debug.c: 12: LATA = 0x0F;
+"12
+[e = _LATA -> -> 15 `i `uc ]
+[; ;debug.c: 13: LATA = tmpH;
+"13
+[e = _LATA _tmpH ]
+[; ;debug.c: 14: LATA = 0x0F;
+"14
+[e = _LATA -> -> 15 `i `uc ]
+[; ;debug.c: 15: LATA = tmpL;
+"15
+[e = _LATA _tmpL ]
+[; ;debug.c: 16: LATA = 0x0F;
+"16
+[e = _LATA -> -> 15 `i `uc ]
+[; ;debug.c: 17: LATA = 0x00;
+"17
+[e = _LATA -> -> 0 `i `uc ]
+[; ;debug.c: 18: }
+"18
+[e :UE 2056 ]
+}
+"20
+[v _DebugPrintString `(v ~T0 @X0 1 ef2`*uc`uc ]
+{
+[; ;debug.c: 20: void DebugPrintString(unsigned char *msg, unsigned char len) {
+[e :U _DebugPrintString ]
+[v _msg `*uc ~T0 @X0 1 r1 ]
+[v _len `uc ~T0 @X0 1 r2 ]
+[f ]
+"21
+[v _i `uc ~T0 @X0 1 a ]
+[; ;debug.c: 21: char i;
+[; ;debug.c: 22: for (i=0;i<len;++i){
+"22
+{
+[e = _i -> -> 0 `i `uc ]
+[e $U 2061  ]
+[e :U 2058 ]
+{
+[; ;debug.c: 23: DebugPrintByte(msg[i]);
+"23
+[e ( _DebugPrintByte (1 *U + _msg * -> _i `ux -> -> # *U _msg `ui `ux ]
+"24
+}
+"22
+[e =+ _i -> -> 1 `i `uc ]
+[e :U 2061 ]
+[e $ < -> _i `i -> _len `i 2058  ]
+[e :U 2059 ]
+"24
+}
+[; ;debug.c: 24: }
+[; ;debug.c: 25: }
+"25
+[e :UE 2057 ]
 }

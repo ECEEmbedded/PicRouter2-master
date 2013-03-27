@@ -9,14 +9,13 @@
 #endif
 #include "user_interrupts.h"
 #include "messages.h"
-#include "my_uart.h"
+
 
 // A function called by the interrupt handler
 // This one does the action I wanted for this program on a timer0 interrupt
 
 void timer0_int_handler() {
-    uart_rcv_msg_timeout();
-//    ToMainHigh_sendmsg(0, MSGT_TIMER0, (void *) 0);
+    ToMainHigh_sendmsg(0, MSGT_TIMER0, (void *) 0);
     
     // reset the timer
     WriteTimer0(0);

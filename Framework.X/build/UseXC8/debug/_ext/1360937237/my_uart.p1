@@ -9,7 +9,7 @@ Version 3.2 HI-TECH Software Intermediate Code
 [n S1854 . . TX1IE ]
 [u S1851 `S1852 1 `S1853 1 `S1854 1 ]
 [n S1851 . . . . ]
-"29934 C:\Program Files (x86)\Microchip\xc8\v1.12\include\pic18f2680.h
+"29934 /Applications/microchip/xc8/v1.12/include/pic18f2680.h
 [v _PIE1bits `VS1851 ~T0 @X0 0 e@3997 ]
 [s S1856 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
 [n S1856 . TMR1IF TMR2IF CCP1IF SSPIF TXIF RCIF ADIF ]
@@ -21,28 +21,10 @@ Version 3.2 HI-TECH Software Intermediate Code
 [n S1855 . . . . ]
 "30007
 [v _PIR1bits `VS1855 ~T0 @X0 0 e@3998 ]
-"596 C:\Program Files (x86)\Microchip\xc8\v1.12\include\plib\usart.h
-[v _ReadUSART `(uc ~T0 @X0 0 ef ]
-"121 C:\Program Files (x86)\Microchip\xc8\v1.12\include\plib\timers.h
-[v _WriteTimer0 `(v ~T0 @X0 0 ef1`ui ]
-"57 ../src/messages.h
-[v _ToMainLow_sendmsg `(c ~T0 @X0 0 ef3`uc`uc`*v ]
-[s S2086 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :4 `uc 1 ]
-[n S2086 . RX_NINE TX_NINE FRAME_ERROR OVERRUN_ERROR fill ]
-[u S2085 `uc 1 `S2086 1 ]
-[n S2085 USART val . ]
-"580 C:\Program Files (x86)\Microchip\xc8\v1.12\include\plib\usart.h
-[v _USART_Status `S2085 ~T0 @X0 0 e ]
-[s S1893 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
-[n S1893 . RX9D OERR FERR ADDEN CREN SREN RX9 SPEN ]
-[s S1894 :3 `uc 1 :1 `uc 1 ]
-[n S1894 . . ADEN ]
-[s S1895 :5 `uc 1 :1 `uc 1 ]
-[n S1895 . . SRENA ]
-[u S1892 `S1893 1 `S1894 1 `S1895 1 ]
-[n S1892 . . . . ]
-"30727 C:\Program Files (x86)\Microchip\xc8\v1.12\include\pic18f2680.h
-[v _RCSTAbits `VS1892 ~T0 @X0 0 e@4011 ]
+"30697
+[v _RCSTA `Vuc ~T0 @X0 0 e@4011 ]
+"31128
+[v _RCREG `Vuc ~T0 @X0 0 e@4014 ]
 [s S2043 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
 [n S2043 . RBIF INT0IF TMR0IF RBIE INT0IE TMR0IE PEIE_GIEL GIE_GIEH ]
 [s S2044 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
@@ -57,6 +39,20 @@ Version 3.2 HI-TECH Software Intermediate Code
 [n S2042 . . . . . . ]
 "33645
 [v _INTCONbits `VS2042 ~T0 @X0 0 e@4082 ]
+"20 ../src/debug.h
+[v _DebugPrintByte `(v ~T0 @X0 0 ef1`uc ]
+"57 ../src/messages.h
+[v _ToMainLow_sendmsg `(c ~T0 @X0 0 ef3`uc`uc`*v ]
+[s S1893 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
+[n S1893 . RX9D OERR FERR ADDEN CREN SREN RX9 SPEN ]
+[s S1894 :3 `uc 1 :1 `uc 1 ]
+[n S1894 . . ADEN ]
+[s S1895 :5 `uc 1 :1 `uc 1 ]
+[n S1895 . . SRENA ]
+[u S1892 `S1893 1 `S1894 1 `S1895 1 ]
+[n S1892 . . . . ]
+"30727 /Applications/microchip/xc8/v1.12/include/pic18f2680.h
+[v _RCSTAbits `VS1892 ~T0 @X0 0 e@4011 ]
 [s S1901 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
 [n S1901 . TX9D TRMT BRGH SENDB SYNC TXEN TX9 CSRC ]
 [s S1902 :2 `uc 1 :1 `uc 1 ]
@@ -101,10 +97,14 @@ Version 3.2 HI-TECH Software Intermediate Code
 [v _BAUDCONbits `VS1933 ~T0 @X0 0 e@4024 ]
 "31139
 [v _SPBRG `Vuc ~T0 @X0 0 e@4015 ]
+"35513
+[v _CREN `Vb ~T0 @X0 0 e@32092 ]
+"36279
+[v _RCIE `Vb ~T0 @X0 0 e@31981 ]
 "31117
 [v _TXREG `Vuc ~T0 @X0 0 e@4013 ]
 [; ;pic18f2680.h: 44: extern volatile unsigned char RXF6SIDH @ 0xD60;
-"46 C:\Program Files (x86)\Microchip\xc8\v1.12\include\pic18f2680.h
+"46 /Applications/microchip/xc8/v1.12/include/pic18f2680.h
 [; ;pic18f2680.h: 46: asm("RXF6SIDH equ 0D60h");
 [; <" RXF6SIDH equ 0D60h ;# ">
 [; ;pic18f2680.h: 49: typedef union {
@@ -14859,9 +14859,42 @@ Version 3.2 HI-TECH Software Intermediate Code
 [; ;my_uart.h: 16: } uart_comm;
 [; ;my_uart.h: 18: void init_uart_snd_rcv(uart_comm *);
 [; ;my_uart.h: 19: void start_UART_send(unsigned char len, unsigned char * msg);
-[; ;my_uart.h: 20: void uart_rcv_msg_timeout(void);
-[; ;my_uart.h: 21: void uart_recv_int_handler(void);
-[; ;my_uart.h: 22: void uart_send_int_handler(void);
+[; ;my_uart.h: 20: void uart_recv_int_handler(void);
+[; ;my_uart.h: 21: void uart_send_int_handler(void);
+[; ;stdarg.h: 7: typedef void * va_list[1];
+[; ;stdarg.h: 10: extern void * __va_start(void);
+[; ;stdarg.h: 13: extern void * __va_arg(void *, ...);
+[; ;stdio.h: 23: extern int errno;
+[; ;stdio.h: 54: struct __prbuf
+[; ;stdio.h: 55: {
+[; ;stdio.h: 56: char * ptr;
+[; ;stdio.h: 57: void (* func)(char);
+[; ;stdio.h: 58: };
+[; ;conio.h: 17: extern int errno;
+[; ;conio.h: 20: extern void init_uart(void);
+[; ;conio.h: 22: extern char getch(void);
+[; ;conio.h: 23: extern char getche(void);
+[; ;conio.h: 24: extern void putch(char);
+[; ;conio.h: 25: extern void ungetch(char);
+[; ;conio.h: 27: extern __bit kbhit(void);
+[; ;conio.h: 31: extern char * cgets(char *);
+[; ;conio.h: 32: extern void cputs(const char *);
+[; ;stdio.h: 99: extern int cprintf(char *, ...);
+[; ;stdio.h: 104: extern int _doprnt(struct __prbuf *, const register char *, register va_list);
+[; ;stdio.h: 194: extern char * gets(char *);
+[; ;stdio.h: 195: extern int puts(const char *);
+[; ;stdio.h: 196: extern int scanf(const char *, ...);
+[; ;stdio.h: 197: extern int sscanf(const char *, const char *, ...);
+[; ;stdio.h: 198: extern int vprintf(const char *, va_list);
+[; ;stdio.h: 199: extern int vsprintf(char *, const char *, va_list) __attribute__((unsupported("vsprintf() is not supported by this compiler")));
+[; ;stdio.h: 200: extern int vscanf(const char *, va_list ap);
+[; ;stdio.h: 201: extern int vsscanf(const char *, const char *, va_list);
+[; ;stdio.h: 205: extern int sprintf(char *, const char *, ...);
+[; ;stdio.h: 206: extern int printf(const char *, ...);
+[; ;debug.h: 16: void DebugPrint(unsigned char out);
+[; ;debug.h: 20: void DebugPrintByte(unsigned char out);
+[; ;debug.h: 22: void DebugPrintString(unsigned char *msg, unsigned char len);
+[; ;debug.h: 30: void DebugSignal();
 "11 ../src/my_uart.c
 [v _uc_ptr `*S2089 ~T0 @X0 1 s ]
 [; ;my_uart.c: 11: static uart_comm *uc_ptr;
@@ -14877,8 +14910,8 @@ Version 3.2 HI-TECH Software Intermediate Code
 "14
 {
 [e = . *U _uc_ptr 3 -> -> 0 `i `uc ]
-[e $U 2094  ]
-[e :U 2091 ]
+[e $U 2095  ]
+[e :U 2092 ]
 {
 [; ;my_uart.c: 15: uc_ptr->outbuffer[uc_ptr->outbuflen] = msg[uc_ptr->outbuflen];
 "15
@@ -14887,9 +14920,9 @@ Version 3.2 HI-TECH Software Intermediate Code
 }
 "14
 [e =+ . *U _uc_ptr 3 -> -> 1 `i `uc ]
-[e :U 2094 ]
-[e $ < -> . *U _uc_ptr 3 `i -> _len `i 2091  ]
-[e :U 2092 ]
+[e :U 2095 ]
+[e $ < -> . *U _uc_ptr 3 `i -> _len `i 2092  ]
+[e :U 2093 ]
 "16
 }
 [; ;my_uart.c: 16: }
@@ -14901,161 +14934,167 @@ Version 3.2 HI-TECH Software Intermediate Code
 [e = . . _PIE1bits 0 4 -> -> 1 `i `uc ]
 [; ;my_uart.c: 25: }
 "25
-[e :UE 2090 ]
+[e :UE 2091 ]
 }
 "27
-[v _uart_rcv_msg_timeout `(v ~T0 @X0 1 ef ]
-{
-[; ;my_uart.c: 27: void uart_rcv_msg_timeout(void) {
-[e :U _uart_rcv_msg_timeout ]
-[f ]
-[; ;my_uart.c: 28: uc_ptr->buflen = 0;
+[v _a `i ~T0 @X0 1 s ]
+[i _a
+-> 0 `i
+]
+[; ;my_uart.c: 27: static int a = 0;
 "28
-[e = . *U _uc_ptr 1 -> -> 0 `i `uc ]
-[; ;my_uart.c: 29: }
-"29
-[e :UE 2095 ]
-}
-"32
 [v _uart_recv_int_handler `(v ~T0 @X0 1 ef ]
 {
-[; ;my_uart.c: 32: void uart_recv_int_handler() {
+[; ;my_uart.c: 28: void uart_recv_int_handler() {
 [e :U _uart_recv_int_handler ]
 [f ]
-[; ;my_uart.c: 37: if ((PIR1bits.RCIF)) {
-"37
+[; ;my_uart.c: 29: if ((PIR1bits.RCIF)) {
+"29
 [e $ ! != -> . . _PIR1bits 0 5 `i -> -> -> 0 `i `Vuc `i 2097  ]
 {
-[; ;my_uart.c: 38: uc_ptr->buffer[uc_ptr->buflen] = ReadUSART();
-"38
-[e = *U + &U . *U _uc_ptr 0 * -> . *U _uc_ptr 1 `ux -> -> # *U &U . *U _uc_ptr 0 `ui `ux ( _ReadUSART ..  ]
-[; ;my_uart.c: 42: WriteTimer0(0);
-"42
-[e ( _WriteTimer0 (1 -> -> 0 `i `ui ]
-[; ;my_uart.c: 44: uc_ptr->buflen++;
-"44
+"30
+[v _errs `i ~T0 @X0 1 a ]
+[; ;my_uart.c: 30: int errs = RCSTA;
+[e = _errs -> _RCSTA `i ]
+[; ;my_uart.c: 32: uc_ptr->buffer[uc_ptr->buflen] = RCREG;
+"32
+[e = *U + &U . *U _uc_ptr 0 * -> . *U _uc_ptr 1 `ux -> -> # *U &U . *U _uc_ptr 0 `ui `ux _RCREG ]
+[; ;my_uart.c: 34: INTCONbits.PEIE = 1;
+"34
+[e = . . _INTCONbits 1 6 -> -> 1 `i `uc ]
+[; ;my_uart.c: 35: uc_ptr->buflen++;
+"35
 [e ++ . *U _uc_ptr 1 -> -> 1 `i `uc ]
-[; ;my_uart.c: 46: if (uc_ptr->buflen == 8) {
-"46
+[; ;my_uart.c: 37: DebugPrintByte(a);
+"37
+[e ( _DebugPrintByte (1 -> _a `uc ]
+[; ;my_uart.c: 38: a = !a;
+"38
+[e = _a -> ! != _a -> 0 `i `i ]
+[; ;my_uart.c: 39: if (uc_ptr->buflen == 8) {
+"39
 [e $ ! == -> . *U _uc_ptr 1 `i -> 8 `i 2098  ]
 {
-[; ;my_uart.c: 47: ToMainLow_sendmsg(uc_ptr->buflen, 31, (void *) uc_ptr->buffer);
-"47
+[; ;my_uart.c: 40: ToMainLow_sendmsg(uc_ptr->buflen, 31, (void *) uc_ptr->buffer);
+"40
 [e ( _ToMainLow_sendmsg (3 , , . *U _uc_ptr 1 -> -> 31 `i `uc -> &U . *U _uc_ptr 0 `*v ]
-[; ;my_uart.c: 48: uc_ptr->buflen = 0;
-"48
+[; ;my_uart.c: 41: uc_ptr->buflen = 0;
+"41
 [e = . *U _uc_ptr 1 -> -> 0 `i `uc ]
-"49
+"42
 }
 [e :U 2098 ]
-"50
-}
-[e :U 2097 ]
-[; ;my_uart.c: 49: }
-[; ;my_uart.c: 50: }
-[; ;my_uart.c: 54: if (USART_Status.OVERRUN_ERROR == 1) {
-"54
-[e $ ! == -> . . _USART_Status 1 3 `i -> 1 `i 2099  ]
+[; ;my_uart.c: 42: };
+[; ;my_uart.c: 44: if (errs & 1) {
+"44
+[e $ ! != & _errs -> 1 `i -> 0 `i 2099  ]
 {
-[; ;my_uart.c: 58: RCSTAbits.CREN = 0;
-"58
+[; ;my_uart.c: 45: RCSTAbits.CREN = 0;
+"45
 [e = . . _RCSTAbits 0 4 -> -> 0 `i `uc ]
-[; ;my_uart.c: 59: RCSTAbits.CREN = 1;
-"59
+[; ;my_uart.c: 46: RCSTAbits.CREN = 1;
+"46
 [e = . . _RCSTAbits 0 4 -> -> 1 `i `uc ]
-[; ;my_uart.c: 60: ToMainLow_sendmsg(0, 30, (void *) 0);
-"60
-[e ( _ToMainLow_sendmsg (3 , , -> -> 0 `i `uc -> -> 30 `i `uc -> -> 0 `i `*v ]
-"61
+"47
 }
 [e :U 2099 ]
-[; ;my_uart.c: 61: }
-[; ;my_uart.c: 62: }
-"62
+[; ;my_uart.c: 47: };
+"48
+}
+[e :U 2097 ]
+[; ;my_uart.c: 48: }
+[; ;my_uart.c: 49: }
+"49
 [e :UE 2096 ]
 }
-"64
+"52
 [v _init_uart_snd_rcv `(v ~T0 @X0 1 ef1`*S2089 ]
 {
-[; ;my_uart.c: 64: void init_uart_snd_rcv(uart_comm *uc) {
+[; ;my_uart.c: 52: void init_uart_snd_rcv(uart_comm *uc) {
 [e :U _init_uart_snd_rcv ]
 [v _uc `*S2089 ~T0 @X0 1 r1 ]
 [f ]
-[; ;my_uart.c: 65: INTCONbits.PEIE = 1;
-"65
+[; ;my_uart.c: 53: INTCONbits.PEIE = 1;
+"53
 [e = . . _INTCONbits 1 6 -> -> 1 `i `uc ]
-[; ;my_uart.c: 66: PIE1bits.TXIE = 1;
-"66
+[; ;my_uart.c: 54: PIE1bits.TXIE = 1;
+"54
 [e = . . _PIE1bits 0 4 -> -> 1 `i `uc ]
-[; ;my_uart.c: 67: TXSTAbits.TXEN = 1;
-"67
+[; ;my_uart.c: 55: TXSTAbits.TXEN = 1;
+"55
 [e = . . _TXSTAbits 0 5 -> -> 1 `i `uc ]
-[; ;my_uart.c: 68: uc_ptr = uc;
-"68
+[; ;my_uart.c: 56: uc_ptr = uc;
+"56
 [e = _uc_ptr _uc ]
-[; ;my_uart.c: 69: uc_ptr->buflen = 0;
-"69
+[; ;my_uart.c: 57: uc_ptr->buflen = 0;
+"57
 [e = . *U _uc_ptr 1 -> -> 0 `i `uc ]
-[; ;my_uart.c: 73: RCSTAbits.SPEN = 1;
-"73
+[; ;my_uart.c: 61: RCSTAbits.SPEN = 1;
+"61
 [e = . . _RCSTAbits 0 7 -> -> 1 `i `uc ]
-[; ;my_uart.c: 74: TRISCbits.TRISC7 = 1;
-"74
+[; ;my_uart.c: 62: TRISCbits.TRISC7 = 1;
+"62
 [e = . . _TRISCbits 0 7 -> -> 1 `i `uc ]
-[; ;my_uart.c: 75: TRISCbits.TRISC6 = 0;
-"75
+[; ;my_uart.c: 63: TRISCbits.TRISC6 = 0;
+"63
 [e = . . _TRISCbits 0 6 -> -> 0 `i `uc ]
-[; ;my_uart.c: 76: TXSTAbits.BRGH = 1;
-"76
+[; ;my_uart.c: 64: TXSTAbits.BRGH = 1;
+"64
 [e = . . _TXSTAbits 0 2 -> -> 1 `i `uc ]
-[; ;my_uart.c: 77: BAUDCONbits.BRG16 = 0;
-"77
+[; ;my_uart.c: 65: BAUDCONbits.BRG16 = 0;
+"65
 [e = . . _BAUDCONbits 0 3 -> -> 0 `i `uc ]
-[; ;my_uart.c: 78: SPBRG = 0x65;
-"78
+[; ;my_uart.c: 66: SPBRG = 0x65;
+"66
 [e = _SPBRG -> -> 101 `i `uc ]
-[; ;my_uart.c: 79: TXSTAbits.SYNC = 0;
-"79
+[; ;my_uart.c: 67: TXSTAbits.SYNC = 0;
+"67
 [e = . . _TXSTAbits 0 4 -> -> 0 `i `uc ]
-[; ;my_uart.c: 80: RCSTAbits.SPEN = 1;
-"80
+[; ;my_uart.c: 68: RCSTAbits.SPEN = 1;
+"68
 [e = . . _RCSTAbits 0 7 -> -> 1 `i `uc ]
-[; ;my_uart.c: 81: }
-"81
+[; ;my_uart.c: 69: CREN = 1;
+"69
+[e = _CREN -> -> 1 `i `b ]
+[; ;my_uart.c: 71: RCIE = 1;;
+"71
+[e = _RCIE -> -> 1 `i `b ]
+[; ;my_uart.c: 72: }
+"72
 [e :UE 2100 ]
 }
-"84
+"75
 [v _uart_send_int_handler `(v ~T0 @X0 1 ef ]
 {
-[; ;my_uart.c: 84: void uart_send_int_handler(void) {
+[; ;my_uart.c: 75: void uart_send_int_handler(void) {
 [e :U _uart_send_int_handler ]
 [f ]
-[; ;my_uart.c: 85: if (uc_ptr->outbufind < uc_ptr->outbuflen) {
-"85
+[; ;my_uart.c: 76: if (uc_ptr->outbufind < uc_ptr->outbuflen) {
+"76
 [e $ ! < -> . *U _uc_ptr 4 `i -> . *U _uc_ptr 3 `i 2102  ]
 {
-[; ;my_uart.c: 89: TXREG = uc_ptr->outbuffer[uc_ptr->outbufind];
-"89
+[; ;my_uart.c: 80: TXREG = uc_ptr->outbuffer[uc_ptr->outbufind];
+"80
 [e = _TXREG *U + &U . *U _uc_ptr 2 * -> . *U _uc_ptr 4 `ux -> -> # *U &U . *U _uc_ptr 2 `ui `ux ]
-[; ;my_uart.c: 91: ++uc_ptr->outbufind;
-"91
+[; ;my_uart.c: 82: ++uc_ptr->outbufind;
+"82
 [e =+ . *U _uc_ptr 4 -> -> 1 `i `uc ]
-"92
+"83
 }
-[; ;my_uart.c: 92: }
+[; ;my_uart.c: 83: }
 [e $U 2103  ]
-"93
+"84
 [e :U 2102 ]
-[; ;my_uart.c: 93: else {
+[; ;my_uart.c: 84: else {
 {
-[; ;my_uart.c: 94: PIE1bits.TXIE = 0;
-"94
+[; ;my_uart.c: 85: PIE1bits.TXIE = 0;
+"85
 [e = . . _PIE1bits 0 4 -> -> 0 `i `uc ]
-"95
+"86
 }
 [e :U 2103 ]
-[; ;my_uart.c: 95: }
-[; ;my_uart.c: 96: }
-"96
+[; ;my_uart.c: 86: }
+[; ;my_uart.c: 87: }
+"87
 [e :UE 2101 ]
 }

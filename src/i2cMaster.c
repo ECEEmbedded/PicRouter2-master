@@ -72,7 +72,6 @@ unsigned char i2c_master_recv(unsigned char ID, char length) {
     FromMainHigh_sendmsg(2,MSGT_I2C_MASTER_RECV,buf);
 
     i2c_master_start_next_in_Q();
-    i2c_master_start_next_in_Q();
 
     return(0);
 }
@@ -93,23 +92,21 @@ void i2c_master_start_next_in_Q() {
     if (i2c_p.status != I2C_FREE) {
         return;
     }
-
+    
     unsigned char msgType;
     i2c_p.buflen = FromMainHigh_recvmsg(MSGLEN, &msgType, i2c_p.buffer);
-    
+
     if (i2c_p.buflen == MSGQUEUE_EMPTY) {
         return;
     }
 
     if (msgType == MSGT_I2C_MASTER_SEND) {
-        i2c_p.buffind = 1;
-        SEN = 1;
-        SSPIF = 1;
-        SSPBUF = i2c_p.buffer[0];
+        i2c_p.buffind = 0;
         i2c_p.status = I2C_SENDING;
+        SEN = 1;
     }
     else if (msgType == MSGT_I2C_MASTER_RECV) {
-        
+
         i2c_p.buffind = 0;
         i2c_p.buflen = i2c_p.buffer[1];
         i2c_p.status = I2C_REQUESTING;
@@ -132,7 +129,8 @@ void i2c_master_int_handler() {
         }
         case I2C_SENDING: {
             if (i2c_p.buffind < i2c_p.buflen/* && !SSPCON2bits.ACKSTAT*/) {
-                    SSPBUF = i2c_p.buffer[i2c_p.buffind++];
+                    SSPBUF = i2c_p.buffer[i2c_p.buffind];
+                    i2c_p.buffind++;
                 } else {    // we have nothing left to send
                     i2c_p.status = I2C_FREE;
                     PEN = 1;
@@ -153,7 +151,6 @@ void i2c_master_int_handler() {
             } else {    // we have nothing left to send
                 i2c_p.status = I2C_FREE;
                 PEN = 1;
-                DebugPrint(i2c_p.buflen);
                 ToMainHigh_sendmsg(i2c_p.buflen, MSGT_I2C_DATA, i2c_p.buffer);
             }
             break;
@@ -195,6 +192,6 @@ void I2CInit(void){
     SSPSTAT |= 0x80; /* Slew rate disabled */
     SSPCON1 = 0x28;   /* SSPEN = 1, I2C Master mode, clock = FOSC/(4 * (SSPADD + 1)) */
     SSPADD = 0x28;    /* 100Khz @ 4Mhz Fosc */
-    
+
     i2c_p.status = I2C_FREE;
 }

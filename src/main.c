@@ -196,7 +196,7 @@ void main(void) {
     // Timer1 interrupt
     IPR1bits.TMR1IP = 0;
     // USART RX/TX interrupt
-    IPR1bits.RCIP = 0;
+    IPR1bits.RCIP = 1;
     IPR1bits.TXIP = 0;
     // I2C interrupt
     IPR1bits.SSPIP = 1;
@@ -270,7 +270,6 @@ void main(void) {
 
     static int currentPollDriver = 0;
     while (1) {
-        DebugPrint(0x00);
 
         // Call a routine that blocks until either on the incoming
         // messages queues has a message (this may put the processor into
@@ -306,9 +305,9 @@ void main(void) {
 
                   else if (msgbuffer[2] != 0 && msgbuffer[2] != 0xFF)
                     start_UART_send(8, msgbuffer+2);
-                    
+
                     // ++currentPollDriver;
-                    // 
+                    //
                     // // ++currentPollDriver;
                     // if (currentPollDriver < NumberOfDrivers) {
                     //   DriverTable[currentPollDriver].poll(DriverTable[currentPollDriver].context);
@@ -345,9 +344,11 @@ void main(void) {
             switch (msgtype) {
                 case MSGT_TIMER1:
                 {
+                    char md[1];
+                    md[0] = 0x55;
+                    //start_UART_send(1, &md);;
                     //What to pull?
                     ++currentPollDriver;
-
                     // add queue to make this section better
                     if (currentPollDriver % 3 == 0) { // IR
                         i2c_master_recv(0x4F, 8);
@@ -367,12 +368,12 @@ void main(void) {
                     //timer1_lthread(&t1thread_data, msgtype, length, msgbuffer);
                     break;
                 };
-             
+
                 case MSGT_OVERRUN:
                 case MSGT_UART_DATA:
                 {
                     //unsigned char *msg = msgbuffer + 3;
-                     i2c_master_send(msgbuffer[0], 8, msgbuffer);
+                    i2c_master_send(msgbuffer[0], 8, msgbuffer);
                     //uart_lthread(&uthread_data, msgtype, length, msgbuffer);
                     break;
                 };

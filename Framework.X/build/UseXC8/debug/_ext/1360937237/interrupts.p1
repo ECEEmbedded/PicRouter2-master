@@ -15,7 +15,7 @@ Version 3.2 HI-TECH Software Intermediate Code
 [n S2009 . BOR POR PD TO RI ]
 [u S2002 `S2003 1 `S2004 1 `S2005 1 `S2006 1 `S2007 1 `S2008 1 `S2009 1 ]
 [n S2002 . . . . . . . . ]
-"32638 C:\Program Files (x86)\Microchip\xc8\v1.12\include\pic18f2680.h
+"32638 /Applications/microchip/xc8/v1.12/include/pic18f2680.h
 [v _RCONbits `VS2002 ~T0 @X0 0 e@4048 ]
 [s S2043 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
 [n S2043 . RBIF INT0IF TMR0IF RBIE INT0IE TMR0IE PEIE_GIEL GIE_GIEH ]
@@ -49,12 +49,12 @@ Version 3.2 HI-TECH Software Intermediate Code
 [v _SleepIfOkay `(v ~T0 @X0 0 ef ]
 "12 ../src/user_interrupts.h
 [v _timer1_int_handler `(v ~T0 @X0 0 ef ]
-"21 ../src/my_uart.h
+"20 ../src/my_uart.h
 [v _uart_recv_int_handler `(v ~T0 @X0 0 ef ]
-"22
+"21
 [v _uart_send_int_handler `(v ~T0 @X0 0 ef ]
 [; ;pic18f2680.h: 44: extern volatile unsigned char RXF6SIDH @ 0xD60;
-"46 C:\Program Files (x86)\Microchip\xc8\v1.12\include\pic18f2680.h
+"46 /Applications/microchip/xc8/v1.12/include/pic18f2680.h
 [; ;pic18f2680.h: 46: asm("RXF6SIDH equ 0D60h");
 [; <" RXF6SIDH equ 0D60h ;# ">
 [; ;pic18f2680.h: 49: typedef union {
@@ -14816,9 +14816,8 @@ Version 3.2 HI-TECH Software Intermediate Code
 [; ;my_uart.h: 16: } uart_comm;
 [; ;my_uart.h: 18: void init_uart_snd_rcv(uart_comm *);
 [; ;my_uart.h: 19: void start_UART_send(unsigned char len, unsigned char * msg);
-[; ;my_uart.h: 20: void uart_rcv_msg_timeout(void);
-[; ;my_uart.h: 21: void uart_recv_int_handler(void);
-[; ;my_uart.h: 22: void uart_send_int_handler(void);
+[; ;my_uart.h: 20: void uart_recv_int_handler(void);
+[; ;my_uart.h: 21: void uart_send_int_handler(void);
 [; ;my_i2c.h: 7: typedef struct __i2c_comm {
 [; ;my_i2c.h: 8: unsigned char buffer[10];
 [; ;my_i2c.h: 9: unsigned char buflen;
@@ -14866,7 +14865,9 @@ Version 3.2 HI-TECH Software Intermediate Code
 [; ;stdio.h: 205: extern int sprintf(char *, const char *, ...);
 [; ;stdio.h: 206: extern int printf(const char *, ...);
 [; ;debug.h: 16: void DebugPrint(unsigned char out);
-[; ;debug.h: 24: void DebugSignal();
+[; ;debug.h: 20: void DebugPrintByte(unsigned char out);
+[; ;debug.h: 22: void DebugPrintString(unsigned char *msg, unsigned char len);
+[; ;debug.h: 30: void DebugSignal();
 [; ;i2cMaster.h: 17: void I2CInit(void);
 [; ;i2cMaster.h: 19: void I2CReadRequest(unsigned char id, unsigned char registerAddress, unsigned char *data, int N);
 [; ;i2cMaster.h: 21: void I2CWriteRequest(unsigned char id, unsigned char registerAddress, unsigned char *data, int N);
@@ -14999,8 +15000,8 @@ Version 3.2 HI-TECH Software Intermediate Code
 [e :UE 2100 ]
 }
 "87
-[v F16421 `(v ~T0 @X0 1 tf ]
-[v _InterruptHandlerHigh `IF16421 ~T0 @X0 1 e ]
+[v F16424 `(v ~T0 @X0 1 tf ]
+[v _InterruptHandlerHigh `IF16424 ~T0 @X0 1 e ]
 {
 [; ;interrupts.c: 82: interrupt
 [; ;interrupts.c: 87: void InterruptHandlerHigh() {
@@ -15042,8 +15043,8 @@ Version 3.2 HI-TECH Software Intermediate Code
 [e :UE 2103 ]
 }
 "130
-[v F16423 `(v ~T0 @X0 1 tf ]
-[v _InterruptHandlerLow `ILF16423 ~T0 @X0 1 e ]
+[v F16426 `(v ~T0 @X0 1 tf ]
+[v _InterruptHandlerLow `ILF16426 ~T0 @X0 1 e ]
 {
 [; ;interrupts.c: 125: interrupt low_priority
 [; ;interrupts.c: 130: void InterruptHandlerLow() {
@@ -15061,37 +15062,32 @@ Version 3.2 HI-TECH Software Intermediate Code
 [e ( _timer1_int_handler ..  ]
 "135
 }
-[; ;interrupts.c: 135: }
-[e $U 2108  ]
-"138
 [e :U 2107 ]
-[; ;interrupts.c: 138: else if (PIR1bits.RCIF) {
-[e $ ! != -> . . _PIR1bits 0 5 `i -> -> -> 0 `i `Vuc `i 2109  ]
+[; ;interrupts.c: 135: }
+[; ;interrupts.c: 138: if (PIR1bits.RCIF) {;
+"138
+[e $ ! != -> . . _PIR1bits 0 5 `i -> -> -> 0 `i `Vuc `i 2108  ]
 {
-[; ;interrupts.c: 139: PIR1bits.RCIF = 0;
-"139
-[e = . . _PIR1bits 0 5 -> -> 0 `i `uc ]
 [; ;interrupts.c: 140: uart_recv_int_handler();
 "140
 [e ( _uart_recv_int_handler ..  ]
 "141
 }
 [; ;interrupts.c: 141: }
-[e $U 2110  ]
+[e $U 2109  ]
 "144
-[e :U 2109 ]
+[e :U 2108 ]
 [; ;interrupts.c: 144: else if (PIR1bits.TXIF) {
-[e $ ! != -> . . _PIR1bits 0 4 `i -> -> -> 0 `i `Vuc `i 2111  ]
+[e $ ! != -> . . _PIR1bits 0 4 `i -> -> -> 0 `i `Vuc `i 2110  ]
 {
 [; ;interrupts.c: 146: uart_send_int_handler();
 "146
 [e ( _uart_send_int_handler ..  ]
 "147
 }
-[e :U 2111 ]
-"149
 [e :U 2110 ]
-[e :U 2108 ]
+"149
+[e :U 2109 ]
 [; ;interrupts.c: 147: }
 [; ;interrupts.c: 149: }
 [e :UE 2106 ]
