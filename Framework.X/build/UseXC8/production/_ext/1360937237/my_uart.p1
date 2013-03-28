@@ -9,7 +9,7 @@ Version 3.2 HI-TECH Software Intermediate Code
 [n S1854 . . TX1IE ]
 [u S1851 `S1852 1 `S1853 1 `S1854 1 ]
 [n S1851 . . . . ]
-"29934 /Applications/microchip/xc8/v1.12/include/pic18f2680.h
+"29934 C:\Program Files (x86)\Microchip\xc8\v1.12\include\pic18f2680.h
 [v _PIE1bits `VS1851 ~T0 @X0 0 e@3997 ]
 [s S1856 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
 [n S1856 . TMR1IF TMR2IF CCP1IF SSPIF TXIF RCIF ADIF ]
@@ -51,7 +51,7 @@ Version 3.2 HI-TECH Software Intermediate Code
 [n S1895 . . SRENA ]
 [u S1892 `S1893 1 `S1894 1 `S1895 1 ]
 [n S1892 . . . . ]
-"30727 /Applications/microchip/xc8/v1.12/include/pic18f2680.h
+"30727 C:\Program Files (x86)\Microchip\xc8\v1.12\include\pic18f2680.h
 [v _RCSTAbits `VS1892 ~T0 @X0 0 e@4011 ]
 [s S1901 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
 [n S1901 . TX9D TRMT BRGH SENDB SYNC TXEN TX9 CSRC ]
@@ -104,7 +104,7 @@ Version 3.2 HI-TECH Software Intermediate Code
 "31117
 [v _TXREG `Vuc ~T0 @X0 0 e@4013 ]
 [; ;pic18f2680.h: 44: extern volatile unsigned char RXF6SIDH @ 0xD60;
-"46 /Applications/microchip/xc8/v1.12/include/pic18f2680.h
+"46 C:\Program Files (x86)\Microchip\xc8\v1.12\include\pic18f2680.h
 [; ;pic18f2680.h: 46: asm("RXF6SIDH equ 0D60h");
 [; <" RXF6SIDH equ 0D60h ;# ">
 [; ;pic18f2680.h: 49: typedef union {

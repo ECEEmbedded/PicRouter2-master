@@ -172,6 +172,8 @@ void main(void) {
     // set direction for PORTA to output
     TRISA = 0x00;
     LATA = 0x00;
+    TRISC = 0x00;
+    LATC = 0x00;
 
     // how to set up PORTA for input (for the V4 board with the PIC2680)
     /*
@@ -268,7 +270,7 @@ void main(void) {
 //    DriverColorAdd(0x4F);
    // DriverIRAdd(0x49);
 
-    static int currentPollDriver = 0;
+    static unsigned char currentPollDriver = 0;
     while (1) {
 
         // Call a routine that blocks until either on the incoming
@@ -296,15 +298,18 @@ void main(void) {
                 };
                 case MSGT_I2C_DATA:
                 {
-                  //IR Sensor
-                  //unsigned char *msg = msgbuffer+1;
-                  //0 means no data is available and 0xFF means that there is an error (No connection`)
-                  if ((msgbuffer[0] >> 1) == COLOR_ADDRESS){
-                     RedL = msgbuffer[2];
-                  }
+                    DebugPrintByte(msgbuffer[0]);
+                    DebugPrintByte(msgbuffer[1]);
+                    DebugPrintByte(msgbuffer[2]);
+                    //IR Sensor
+                    //unsigned char *msg = msgbuffer+1;
+                    //0 means no data is available and 0xFF means that there is an error (No connection`)
+                    if ((msgbuffer[0] >> 1) == COLOR_ADDRESS){
+                        RedL = msgbuffer[2];
+                    }
 
-                  else if (msgbuffer[2] != 0 && msgbuffer[2] != 0xFF)
-                    start_UART_send(8, msgbuffer+2);
+                    else if (msgbuffer[0] != 0 && msgbuffer[2] != 0xFF)
+                        start_UART_send(8, msgbuffer+2);
 
                     // ++currentPollDriver;
                     //
@@ -344,17 +349,14 @@ void main(void) {
             switch (msgtype) {
                 case MSGT_TIMER1:
                 {
-                    char md[1];
-                    md[0] = 0x55;
-                    //start_UART_send(1, &md);;
-                    //What to pull?
-                    ++currentPollDriver;
                     // add queue to make this section better
-                    if (currentPollDriver % 3 == 0) { // IR
+                    if (currentPollDriver == 0) { // IR
                         i2c_master_recv(0x4F, 8);
-                    } else if (currentPollDriver % 3 == 1) { // Encoders
-                        i2c_master_recv(0x4F, 8);
-                    } else if (currentPollDriver % 3 == 2) { // Color
+                        currentPollDriver = 1;
+
+                        LATCbits.LATC0 = !LATCbits.LATC0;
+                    }
+                    else if (currentPollDriver == 1) { // Color
                         //i2c_master_request_reg(COLOR_ADDRESS,DATA_RED_LO,1);
 //                        i2c_master_request_reg(COLOR_ADDRESS,DATA_RED_HI,1/*color adr, reg2 adr, length (probably 1)*/);
 //                        i2c_master_request_reg(COLOR_ADDRESS,DATA_GREEN_LO,1/*color adr, reg2 adr, length (probably 1)*/);
@@ -364,6 +366,7 @@ void main(void) {
 //                        i2c_master_request_reg(COLOR_ADDRESS,DATA_CLEAR_LO,1/*color adr, reg1 adr, length (probably 1)*/);
 //                        i2c_master_request_reg(COLOR_ADDRESS,DATA_CLEAR_HI,1/*color adr, reg2 adr, length (probably 1)*/);
 
+                        currentPollDriver = 0;
                     }
                     //timer1_lthread(&t1thread_data, msgtype, length, msgbuffer);
                     break;

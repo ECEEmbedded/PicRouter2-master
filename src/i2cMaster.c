@@ -139,15 +139,17 @@ void i2c_master_int_handler() {
             break;
         }
         case I2C_REQUESTING: {
-            SSPBUF = i2c_p.buffer[i2c_p.buffind++];
+            SSPBUF = i2c_p.buffer[i2c_p.buffind];
+            ++i2c_p.buffind;
             i2c_p.status = I2C_RECEIVING;
             break;
         }
         case I2C_RECEIVING: {
             if (i2c_p.buffind < i2c_p.buflen) {
                 i2c_p.status = I2C_ACKNOWLEDGE;
+                i2c_p.buffer[i2c_p.buffind] = SSPBUF;
+                ++i2c_p.buffind;
                 RCEN = 1;
-                i2c_p.buffer[i2c_p.buffind++] = SSPBUF;
             } else {    // we have nothing left to send
                 i2c_p.status = I2C_FREE;
                 PEN = 1;

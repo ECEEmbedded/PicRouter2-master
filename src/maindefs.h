@@ -29,6 +29,10 @@
 #include <p18cxxx.h>
 #endif
 
+// I2C addresses
+#define I2C_IR_ADDRESS      0x4F
+#define I2C_MOTOR_ADDRESS   0x3A
+
 // Message type definitions
 #define MSGT_TIMER0 10
 #define MSGT_TIMER1 11

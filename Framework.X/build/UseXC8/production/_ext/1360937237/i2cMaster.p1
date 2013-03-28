@@ -9,7 +9,7 @@ Version 3.2 HI-TECH Software Intermediate Code
 [n E16393 . I2C_FREE I2C_SENDING I2C_REQUESTING I2C_RECEIVING I2C_REQUESTING_REG I2C_ACKNOWLEDGE  ]
 "79 ../src/messages.h
 [v _FromMainHigh_recvmsg `(c ~T0 @X0 0 ef3`uc`*uc`*v ]
-"37991 /Applications/microchip/xc8/v1.12/include/pic18f2680.h
+"37991 C:\Program Files (x86)\Microchip\xc8\v1.12\include\pic18f2680.h
 [v _SEN `Vb ~T0 @X0 0 e@32296 ]
 "32335
 [v _SSPBUF `Vuc ~T0 @X0 0 e@4041 ]
@@ -19,7 +19,7 @@ Version 3.2 HI-TECH Software Intermediate Code
 [v _RCEN `Vb ~T0 @X0 0 e@32299 ]
 "64 ../src/messages.h
 [v _ToMainHigh_sendmsg `(c ~T0 @X0 0 ef3`uc`uc`*v ]
-"36329 /Applications/microchip/xc8/v1.12/include/pic18f2680.h
+"36329 C:\Program Files (x86)\Microchip\xc8\v1.12\include\pic18f2680.h
 [v _RSEN `Vb ~T0 @X0 0 e@32297 ]
 "33921
 [v _ACKEN `Vb ~T0 @X0 0 e@32300 ]
@@ -36,7 +36,7 @@ Version 3.2 HI-TECH Software Intermediate Code
 "32329
 [v _SSPADD `Vuc ~T0 @X0 0 e@4040 ]
 [; ;pic18f2680.h: 44: extern volatile unsigned char RXF6SIDH @ 0xD60;
-"46 /Applications/microchip/xc8/v1.12/include/pic18f2680.h
+"46 C:\Program Files (x86)\Microchip\xc8\v1.12\include\pic18f2680.h
 [; ;pic18f2680.h: 46: asm("RXF6SIDH equ 0D60h");
 [; <" RXF6SIDH equ 0D60h ;# ">
 [; ;pic18f2680.h: 49: typedef union {
@@ -15141,140 +15141,143 @@ Version 3.2 HI-TECH Software Intermediate Code
 "141
 [e :U 2114 ]
 {
-[; ;i2cMaster.c: 142: SSPBUF = i2c_p.buffer[i2c_p.buffind++];
+[; ;i2cMaster.c: 142: SSPBUF = i2c_p.buffer[i2c_p.buffind];
 "142
-[e = _SSPBUF *U + &U . _i2c_p 0 * -> ++ . _i2c_p 2 -> -> 1 `i `uc `ux -> -> # *U &U . _i2c_p 0 `ui `ux ]
-[; ;i2cMaster.c: 143: i2c_p.status = I2C_RECEIVING;
+[e = _SSPBUF *U + &U . _i2c_p 0 * -> . _i2c_p 2 `ux -> -> # *U &U . _i2c_p 0 `ui `ux ]
+[; ;i2cMaster.c: 143: ++i2c_p.buffind;
 "143
-[e = . _i2c_p 4 -> . `E16393 3 `uc ]
-[; ;i2cMaster.c: 144: break;
+[e =+ . _i2c_p 2 -> -> 1 `i `uc ]
+[; ;i2cMaster.c: 144: i2c_p.status = I2C_RECEIVING;
 "144
-[e $U 2108  ]
+[e = . _i2c_p 4 -> . `E16393 3 `uc ]
+[; ;i2cMaster.c: 145: break;
 "145
-}
-[; ;i2cMaster.c: 145: }
-[; ;i2cMaster.c: 146: case I2C_RECEIVING: {
+[e $U 2108  ]
 "146
+}
+[; ;i2cMaster.c: 146: }
+[; ;i2cMaster.c: 147: case I2C_RECEIVING: {
+"147
 [e :U 2115 ]
 {
-[; ;i2cMaster.c: 147: if (i2c_p.buffind < i2c_p.buflen) {
-"147
+[; ;i2cMaster.c: 148: if (i2c_p.buffind < i2c_p.buflen) {
+"148
 [e $ ! < -> . _i2c_p 2 `i -> . _i2c_p 1 `i 2116  ]
 {
-[; ;i2cMaster.c: 148: i2c_p.status = I2C_ACKNOWLEDGE;
-"148
-[e = . _i2c_p 4 -> . `E16393 5 `uc ]
-[; ;i2cMaster.c: 149: RCEN = 1;
+[; ;i2cMaster.c: 149: i2c_p.status = I2C_ACKNOWLEDGE;
 "149
-[e = _RCEN -> -> 1 `i `b ]
+[e = . _i2c_p 4 -> . `E16393 5 `uc ]
 [; ;i2cMaster.c: 150: i2c_p.buffer[i2c_p.buffind++] = SSPBUF;
 "150
 [e = *U + &U . _i2c_p 0 * -> ++ . _i2c_p 2 -> -> 1 `i `uc `ux -> -> # *U &U . _i2c_p 0 `ui `ux _SSPBUF ]
+[; ;i2cMaster.c: 151: RCEN = 1;
 "151
+[e = _RCEN -> -> 1 `i `b ]
+"152
 }
-[; ;i2cMaster.c: 151: } else {
+[; ;i2cMaster.c: 152: } else {
 [e $U 2117  ]
 [e :U 2116 ]
 {
-[; ;i2cMaster.c: 152: i2c_p.status = I2C_FREE;
-"152
-[e = . _i2c_p 4 -> . `E16393 0 `uc ]
-[; ;i2cMaster.c: 153: PEN = 1;
+[; ;i2cMaster.c: 153: i2c_p.status = I2C_FREE;
 "153
-[e = _PEN -> -> 1 `i `b ]
-[; ;i2cMaster.c: 154: ToMainHigh_sendmsg(i2c_p.buflen, 40, i2c_p.buffer);
+[e = . _i2c_p 4 -> . `E16393 0 `uc ]
+[; ;i2cMaster.c: 154: PEN = 1;
 "154
-[e ( _ToMainHigh_sendmsg (3 , , -> . _i2c_p 1 `uc -> -> 40 `i `uc -> &U . _i2c_p 0 `*v ]
+[e = _PEN -> -> 1 `i `b ]
+[; ;i2cMaster.c: 155: ToMainHigh_sendmsg(i2c_p.buflen, 40, i2c_p.buffer);
 "155
+[e ( _ToMainHigh_sendmsg (3 , , -> . _i2c_p 1 `uc -> -> 40 `i `uc -> &U . _i2c_p 0 `*v ]
+"156
 }
 [e :U 2117 ]
-[; ;i2cMaster.c: 155: }
-[; ;i2cMaster.c: 156: break;
-"156
-[e $U 2108  ]
+[; ;i2cMaster.c: 156: }
+[; ;i2cMaster.c: 157: break;
 "157
-}
-[; ;i2cMaster.c: 157: }
-[; ;i2cMaster.c: 158: case I2C_REQUESTING_REG: {
+[e $U 2108  ]
 "158
+}
+[; ;i2cMaster.c: 158: }
+[; ;i2cMaster.c: 159: case I2C_REQUESTING_REG: {
+"159
 [e :U 2118 ]
 {
-[; ;i2cMaster.c: 159: if (i2c_p.buffind >= 2) {
-"159
+[; ;i2cMaster.c: 160: if (i2c_p.buffind >= 2) {
+"160
 [e $ ! >= -> . _i2c_p 2 `i -> 2 `i 2119  ]
 {
-[; ;i2cMaster.c: 160: SSPBUF = i2c_p.buffer[i2c_p.buffind++];
-"160
-[e = _SSPBUF *U + &U . _i2c_p 0 * -> ++ . _i2c_p 2 -> -> 1 `i `uc `ux -> -> # *U &U . _i2c_p 0 `ui `ux ]
+[; ;i2cMaster.c: 161: SSPBUF = i2c_p.buffer[i2c_p.buffind++];
 "161
-}
-[; ;i2cMaster.c: 161: }
-[e $U 2120  ]
+[e = _SSPBUF *U + &U . _i2c_p 0 * -> ++ . _i2c_p 2 -> -> 1 `i `uc `ux -> -> # *U &U . _i2c_p 0 `ui `ux ]
 "162
-[e :U 2119 ]
-[; ;i2cMaster.c: 162: else {
-{
-[; ;i2cMaster.c: 163: i2c_p.buffind = 0;
+}
+[; ;i2cMaster.c: 162: }
+[e $U 2120  ]
 "163
-[e = . _i2c_p 2 -> -> 0 `i `uc ]
-[; ;i2cMaster.c: 164: i2c_p.buffer[0] = i2c_p.buffer[0] & 0xFE;
+[e :U 2119 ]
+[; ;i2cMaster.c: 163: else {
+{
+[; ;i2cMaster.c: 164: i2c_p.buffind = 0;
 "164
-[e = *U + &U . _i2c_p 0 * -> -> -> 0 `i `ui `ux -> -> # *U &U . _i2c_p 0 `ui `ux -> & -> *U + &U . _i2c_p 0 * -> -> -> 0 `i `ui `ux -> -> # *U &U . _i2c_p 0 `ui `ux `i -> 254 `i `uc ]
-[; ;i2cMaster.c: 165: i2c_p.status = I2C_REQUESTING;
+[e = . _i2c_p 2 -> -> 0 `i `uc ]
+[; ;i2cMaster.c: 165: i2c_p.buffer[0] = i2c_p.buffer[0] & 0xFE;
 "165
-[e = . _i2c_p 4 -> . `E16393 2 `uc ]
-[; ;i2cMaster.c: 166: RSEN = 1;
+[e = *U + &U . _i2c_p 0 * -> -> -> 0 `i `ui `ux -> -> # *U &U . _i2c_p 0 `ui `ux -> & -> *U + &U . _i2c_p 0 * -> -> -> 0 `i `ui `ux -> -> # *U &U . _i2c_p 0 `ui `ux `i -> 254 `i `uc ]
+[; ;i2cMaster.c: 166: i2c_p.status = I2C_REQUESTING;
 "166
-[e = _RSEN -> -> 1 `i `b ]
+[e = . _i2c_p 4 -> . `E16393 2 `uc ]
+[; ;i2cMaster.c: 167: RSEN = 1;
 "167
+[e = _RSEN -> -> 1 `i `b ]
+"168
 }
 [e :U 2120 ]
-[; ;i2cMaster.c: 167: }
-[; ;i2cMaster.c: 168: break;
-"168
-[e $U 2108  ]
+[; ;i2cMaster.c: 168: }
+[; ;i2cMaster.c: 169: break;
 "169
-}
-[; ;i2cMaster.c: 169: }
-[; ;i2cMaster.c: 170: case I2C_ACKNOWLEDGE: {
+[e $U 2108  ]
 "170
+}
+[; ;i2cMaster.c: 170: }
+[; ;i2cMaster.c: 171: case I2C_ACKNOWLEDGE: {
+"171
 [e :U 2121 ]
 {
-[; ;i2cMaster.c: 171: ACKEN = 1;
-"171
-[e = _ACKEN -> -> 1 `i `b ]
-[; ;i2cMaster.c: 172: if (i2c_p.buffind < i2c_p.buflen) {
+[; ;i2cMaster.c: 172: ACKEN = 1;
 "172
+[e = _ACKEN -> -> 1 `i `b ]
+[; ;i2cMaster.c: 173: if (i2c_p.buffind < i2c_p.buflen) {
+"173
 [e $ ! < -> . _i2c_p 2 `i -> . _i2c_p 1 `i 2122  ]
 {
-[; ;i2cMaster.c: 173: ACKDT = 0;
-"173
-[e = _ACKDT -> -> 0 `i `b ]
+[; ;i2cMaster.c: 174: ACKDT = 0;
 "174
+[e = _ACKDT -> -> 0 `i `b ]
+"175
 }
-[; ;i2cMaster.c: 174: } else {
+[; ;i2cMaster.c: 175: } else {
 [e $U 2123  ]
 [e :U 2122 ]
 {
-[; ;i2cMaster.c: 175: ACKDT = 1;
-"175
-[e = _ACKDT -> -> 1 `i `b ]
+[; ;i2cMaster.c: 176: ACKDT = 1;
 "176
+[e = _ACKDT -> -> 1 `i `b ]
+"177
 }
 [e :U 2123 ]
-[; ;i2cMaster.c: 176: }
-[; ;i2cMaster.c: 177: i2c_p.status = I2C_RECEIVING;
-"177
-[e = . _i2c_p 4 -> . `E16393 3 `uc ]
-[; ;i2cMaster.c: 178: break;
+[; ;i2cMaster.c: 177: }
+[; ;i2cMaster.c: 178: i2c_p.status = I2C_RECEIVING;
 "178
-[e $U 2108  ]
+[e = . _i2c_p 4 -> . `E16393 3 `uc ]
+[; ;i2cMaster.c: 179: break;
 "179
-}
+[e $U 2108  ]
 "180
 }
-[; ;i2cMaster.c: 179: }
+"181
+}
 [; ;i2cMaster.c: 180: }
+[; ;i2cMaster.c: 181: }
 [e $U 2108  ]
 "125
 [e :U 2109 ]
@@ -15285,37 +15288,37 @@ Version 3.2 HI-TECH Software Intermediate Code
  , $ -> . `E16393 4 `uc 2118
  , $ -> . `E16393 5 `uc 2121
  2108 ]
-"180
-[e :U 2108 ]
-[; ;i2cMaster.c: 181: }
 "181
+[e :U 2108 ]
+[; ;i2cMaster.c: 182: }
+"182
 [e :UE 2107 ]
 }
-"189
+"190
 [v _I2CInit `(v ~T0 @X0 1 ef ]
 {
-[; ;i2cMaster.c: 189: void I2CInit(void){
+[; ;i2cMaster.c: 190: void I2CInit(void){
 [e :U _I2CInit ]
 [f ]
-[; ;i2cMaster.c: 190: TRISC3 = 1;
-"190
-[e = _TRISC3 -> -> 1 `i `b ]
-[; ;i2cMaster.c: 191: TRISC4 = 1;
+[; ;i2cMaster.c: 191: TRISC3 = 1;
 "191
-[e = _TRISC4 -> -> 1 `i `b ]
-[; ;i2cMaster.c: 192: SSPSTAT |= 0x80;
+[e = _TRISC3 -> -> 1 `i `b ]
+[; ;i2cMaster.c: 192: TRISC4 = 1;
 "192
-[e =| _SSPSTAT -> -> 128 `i `uc ]
-[; ;i2cMaster.c: 193: SSPCON1 = 0x28;
+[e = _TRISC4 -> -> 1 `i `b ]
+[; ;i2cMaster.c: 193: SSPSTAT |= 0x80;
 "193
-[e = _SSPCON1 -> -> 40 `i `uc ]
-[; ;i2cMaster.c: 194: SSPADD = 0x28;
+[e =| _SSPSTAT -> -> 128 `i `uc ]
+[; ;i2cMaster.c: 194: SSPCON1 = 0x28;
 "194
+[e = _SSPCON1 -> -> 40 `i `uc ]
+[; ;i2cMaster.c: 195: SSPADD = 0x28;
+"195
 [e = _SSPADD -> -> 40 `i `uc ]
-[; ;i2cMaster.c: 196: i2c_p.status = I2C_FREE;
-"196
-[e = . _i2c_p 4 -> . `E16393 0 `uc ]
-[; ;i2cMaster.c: 197: }
+[; ;i2cMaster.c: 197: i2c_p.status = I2C_FREE;
 "197
+[e = . _i2c_p 4 -> . `E16393 0 `uc ]
+[; ;i2cMaster.c: 198: }
+"198
 [e :UE 2124 ]
 }
