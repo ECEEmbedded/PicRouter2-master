@@ -8,8 +8,10 @@ enum {
     I2C_SENDING,
     I2C_REQUESTING,
     I2C_RECEIVING,
+    I2C_RECEIVE_NEXT_BYTE,
+    I2C_RECEIVED,
     I2C_REQUESTING_REG,
-    I2C_ACKNOWLEDGE
+    I2C_ACKSTAT
 };
 
 typedef struct __i2c_master_comm {
@@ -124,6 +126,7 @@ void i2c_master_start_next_in_Q() {
 void i2c_master_int_handler() {
     switch (i2c_p.status) {
         case I2C_FREE: {
+    DebugPrint(0x06);
             i2c_master_start_next_in_Q();
             break;
         }
@@ -139,22 +142,33 @@ void i2c_master_int_handler() {
             break;
         }
         case I2C_REQUESTING: {
+DebugPrint(0x01);
             SSPBUF = i2c_p.buffer[i2c_p.buffind];
             ++i2c_p.buffind;
-            i2c_p.status = I2C_RECEIVING;
+            i2c_p.status = I2C_ACKSTAT;
             break;
         }
         case I2C_RECEIVING: {
+            i2c_p.buffer[i2c_p.buffind] = SSPBUF;
+            ++i2c_p.buffind;
+
             if (i2c_p.buffind < i2c_p.buflen) {
-                i2c_p.status = I2C_ACKNOWLEDGE;
-                i2c_p.buffer[i2c_p.buffind] = SSPBUF;
-                ++i2c_p.buffind;
-                RCEN = 1;
-            } else {    // we have nothing left to send
-                i2c_p.status = I2C_FREE;
-                PEN = 1;
-                ToMainHigh_sendmsg(i2c_p.buflen, MSGT_I2C_DATA, i2c_p.buffer);
+                i2c_p.status = I2C_RECEIVE_NEXT_BYTE;
+                ACKDT = 0;
+DebugPrint(0x03);
             }
+            else {    // we have nothing left to send
+                i2c_p.status = I2C_RECEIVED;
+DebugPrint(0x05);
+                ACKDT = 1;
+            }
+            ACKEN = 1;
+            break;
+        }
+        case I2C_RECEIVE_NEXT_BYTE: {
+            i2c_p.status = I2C_RECEIVING;
+DebugPrint(0x04);
+            RCEN = 1;
             break;
         }
         case I2C_REQUESTING_REG: {
@@ -169,15 +183,23 @@ void i2c_master_int_handler() {
             }
             break;
         }
-        case I2C_ACKNOWLEDGE: {
-            ACKEN = 1;
-            if (i2c_p.buffind < i2c_p.buflen) {
-                ACKDT = 0;
-            } else {    // we have nothing left to send
-                ACKDT = 1;
+        case I2C_ACKSTAT: {
+            if (SSPCON2bits.ACKSTAT) { // 1 if no acknowledge
+                i2c_p.status = I2C_FREE;
+                PEN = 1;
             }
-            i2c_p.status = I2C_RECEIVING;
+            else {
+DebugPrint(0x02);
+                i2c_p.status = I2C_RECEIVING;
+                RCEN = 1;
+            }
             break;
+        }
+        case I2C_RECEIVED: {
+            i2c_p.status = I2C_FREE;
+DebugPrint(0x06);
+            ToMainHigh_sendmsg(i2c_p.buflen, MSGT_I2C_DATA, i2c_p.buffer);
+            PEN = 1;
         }
     }
 }

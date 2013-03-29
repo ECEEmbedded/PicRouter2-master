@@ -293,24 +293,20 @@ void main(void) {
             switch (msgtype) {
                 case MSGT_TIMER0:
                 {
-                    timer0_lthread(&t0thread_data, msgtype, length, msgbuffer);
+                    //timer0_lthread(&t0thread_data, msgtype, length, msgbuffer);
                     break;
                 };
                 case MSGT_I2C_DATA:
-                {
-                    DebugPrintByte(msgbuffer[0]);
-                    DebugPrintByte(msgbuffer[1]);
-                    DebugPrintByte(msgbuffer[2]);
+                {                    
                     //IR Sensor
-                    //unsigned char *msg = msgbuffer+1;
-                    //0 means no data is available and 0xFF means that there is an error (No connection`)
                     if ((msgbuffer[0] >> 1) == COLOR_ADDRESS){
                         RedL = msgbuffer[2];
                     }
+                    else if (msgbuffer[2] != 0) { //0 means no data is available
+                        start_UART_send(8, msgbuffer+1);
 
-                    else if (msgbuffer[0] != 0 && msgbuffer[2] != 0xFF)
-                        start_UART_send(8, msgbuffer+2);
-
+                        LATCbits.LATC0 = !LATCbits.LATC0;
+                    }
                     // ++currentPollDriver;
                     //
                     // // ++currentPollDriver;
@@ -352,19 +348,20 @@ void main(void) {
                     // add queue to make this section better
                     if (currentPollDriver == 0) { // IR
                         i2c_master_recv(0x4F, 8);
+                        i2c_master_recv(0x4F, 8);
                         currentPollDriver = 1;
-
-                        LATCbits.LATC0 = !LATCbits.LATC0;
                     }
                     else if (currentPollDriver == 1) { // Color
+                        i2c_master_recv(0x4F, 8);
+                        i2c_master_recv(0x4F, 8);
                         //i2c_master_request_reg(COLOR_ADDRESS,DATA_RED_LO,1);
-//                        i2c_master_request_reg(COLOR_ADDRESS,DATA_RED_HI,1/*color adr, reg2 adr, length (probably 1)*/);
-//                        i2c_master_request_reg(COLOR_ADDRESS,DATA_GREEN_LO,1/*color adr, reg2 adr, length (probably 1)*/);
-//                        i2c_master_request_reg(COLOR_ADDRESS,DATA_GREEN_HI,1/*color adr, reg1 adr, length (probably 1)*/);
-//                        i2c_master_request_reg(COLOR_ADDRESS,DATA_BLUE_LO,1/*color adr, reg2 adr, length (probably 1)*/);
-//                        i2c_master_request_reg(COLOR_ADDRESS,DATA_BLUE_HI,1/*color adr, reg2 adr, length (probably 1)*/);
-//                        i2c_master_request_reg(COLOR_ADDRESS,DATA_CLEAR_LO,1/*color adr, reg1 adr, length (probably 1)*/);
-//                        i2c_master_request_reg(COLOR_ADDRESS,DATA_CLEAR_HI,1/*color adr, reg2 adr, length (probably 1)*/);
+//                        i2c_master_request_reg(COLOR_ADDRESS,DATA_RED_HI,1);
+//                        i2c_master_request_reg(COLOR_ADDRESS,DATA_GREEN_LO,1);
+//                        i2c_master_request_reg(COLOR_ADDRESS,DATA_GREEN_HI,1);
+//                        i2c_master_request_reg(COLOR_ADDRESS,DATA_BLUE_LO,1);
+//                        i2c_master_request_reg(COLOR_ADDRESS,DATA_BLUE_HI,1);
+//                        i2c_master_request_reg(COLOR_ADDRESS,DATA_CLEAR_LO,1);
+//                        i2c_master_request_reg(COLOR_ADDRESS,DATA_CLEAR_HI,1);
 
                         currentPollDriver = 0;
                     }
