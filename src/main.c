@@ -156,7 +156,12 @@ void main(void) {
 #endif
 #endif
 #endif
-
+    // set direction for PORTA to output
+    TRISA = 0x00;
+    LATA = 0x00;
+    TRISC = 0x00;
+    LATC = 0x00;
+    
     // initialize my uart recv handling code
     init_uart_snd_rcv(&uc);
 
@@ -169,11 +174,7 @@ void main(void) {
     // initialize message queues before enabling any interrupts
     init_queues();
 
-    // set direction for PORTA to output
-    TRISA = 0x00;
-    LATA = 0x00;
-    TRISC = 0x00;
-    LATC = 0x00;
+
 
     // how to set up PORTA for input (for the V4 board with the PIC2680)
     /*
@@ -185,7 +186,7 @@ void main(void) {
      */
 
     // initialize Timers
-    OpenTimer0(TIMER_INT_ON & T0_8BIT & T0_SOURCE_INT & T0_PS_1_8);
+    OpenTimer0(TIMER_INT_ON & T0_16BIT & T0_SOURCE_INT & T0_PS_1_256);
 #ifdef __USE18F26J50
     // MTJ added second argument for OpenTimer1()
     OpenTimer1(TIMER_INT_ON & T1_SOURCE_FOSC_4 & T1_PS_1_4 & T1_16BIT_RW & T1_OSC1EN_OFF & T1_SYNC_EXT_OFF,0x0);
@@ -198,7 +199,7 @@ void main(void) {
     // Timer1 interrupt
     IPR1bits.TMR1IP = 0;
     // USART RX/TX interrupt
-    IPR1bits.RCIP = 1;
+    IPR1bits.RCIP = 0;
     IPR1bits.TXIP = 0;
     // I2C interrupt
     IPR1bits.SSPIP = 1;
@@ -299,8 +300,8 @@ void main(void) {
                 case MSGT_I2C_DATA:
                 {                    
                     //IR Sensor
-                    if ((msgbuffer[0] >> 1) == COLOR_ADDRESS){
-                        RedL = msgbuffer[2];
+                    if ((msgbuffer[0] >> 1) == I2C_COLOR_ADDRESS){
+                        color_read(msgbuffer, length);
                     }
                     else if (msgbuffer[2] != 0) { //0 means no data is available
                         start_UART_send(8, msgbuffer+1);
@@ -348,12 +349,9 @@ void main(void) {
                     // add queue to make this section better
                     if (currentPollDriver == 0) { // IR
                         i2c_master_recv(0x4F, 8);
-                        i2c_master_recv(0x4F, 8);
                         currentPollDriver = 1;
                     }
                     else if (currentPollDriver == 1) { // Color
-                        i2c_master_recv(0x4F, 8);
-                        i2c_master_recv(0x4F, 8);
                         //i2c_master_request_reg(COLOR_ADDRESS,DATA_RED_LO,1);
 //                        i2c_master_request_reg(COLOR_ADDRESS,DATA_RED_HI,1);
 //                        i2c_master_request_reg(COLOR_ADDRESS,DATA_GREEN_LO,1);
@@ -372,6 +370,7 @@ void main(void) {
                 case MSGT_OVERRUN:
                 case MSGT_UART_DATA:
                 {
+                    LATCbits.LATC1 = !LATCbits.LATC1;
                     //unsigned char *msg = msgbuffer + 3;
                     i2c_master_send(msgbuffer[0], 8, msgbuffer);
                     //uart_lthread(&uthread_data, msgtype, length, msgbuffer);

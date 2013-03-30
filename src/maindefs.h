@@ -32,6 +32,7 @@
 // I2C addresses
 #define I2C_IR_ADDRESS      0x4F
 #define I2C_MOTOR_ADDRESS   0x3A
+#define I2C_COLOR_ADDRESS  0x74
 
 // Message type definitions
 #define MSGT_TIMER0 10

@@ -87,12 +87,8 @@ interrupt
 void InterruptHandlerHigh() {
     // We need to check the interrupt flag of each enabled high-priority interrupt to
     // see which device generated this interrupt.  Then we can call the correct handler.
-    // check to see if we have an I2C interrupt
-    if (PIR1bits.RCIF) {
-        PIR1bits.RCIF = 0; //clear interrupt flag
-        uart_recv_int_handler();
-    }
 
+    // check to see if we have an I2C interrupt
     if (PIR1bits.SSPIF) {
         // clear the interrupt flag
         PIR1bits.SSPIF = 0;
@@ -106,11 +102,6 @@ void InterruptHandlerHigh() {
         // call whatever handler you want (this is "user" defined)
         timer0_int_handler();
     }
-    
-    // Check for ADC interrupt
-    //if (PIR1bits.ADIF) {
-    //    adcIntHandler();
-    //}
 
     // here is where you would check other interrupt flags.
 
@@ -143,6 +134,11 @@ void InterruptHandlerLow() {
     if (PIR1bits.TMR1IF) {
         PIR1bits.TMR1IF = 0; //clear interrupt flag
         timer1_int_handler();
+    }
+    
+    if (PIR1bits.RCIF) {
+        PIR1bits.RCIF = 0; //clear interrupt flag
+        uart_recv_int_handler();
     }
 
     // check to see if we have an interrupt on USART TX

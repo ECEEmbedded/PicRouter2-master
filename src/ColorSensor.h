@@ -8,28 +8,28 @@
 #ifndef COLORSENSOR_H
 #define	COLORSENSOR_H
 
-#define Clock_8MHz
-#define Baud_9600
-
-
-#define STATUS_LED PORTB.3
-
-
-#define WRITE_sda() TRISB = TRISB & 0b10111111 //SDA must be output when writing
-#define READ_sda()  TRISB = TRISB | 0b01000000 //SDA must be input when reading - don't forget the resistor on SDA!!
-
-#define SCL PORTB.7
-#define SDA PORTB.6
-
-#define I2C_DELAY   1
-
-#define ACK     1
-#define NO_ACK  0
+//#define Clock_8MHz
+//#define Baud_9600
+//
+//
+//#define STATUS_LED PORTB.3
+//
+//
+//#define WRITE_sda() TRISB = TRISB & 0b10111111 //SDA must be output when writing
+//#define READ_sda()  TRISB = TRISB | 0b01000000 //SDA must be input when reading - don't forget the resistor on SDA!!
+//
+//#define SCL PORTB.7
+//#define SDA PORTB.6
+//
+//#define I2C_DELAY   1
+//
+//#define ACK     1
+//#define NO_ACK  0
 
 //#define DEVICE_WRITE    0x74 //Default ADJD-S371 I2C address - write
 //#define DEVICE_READ     0xE9 //Default ADJD-S371 I2C address - read
 
-#define COLOR_ADDRESS  0x74
+
 
 
 #define CAP_RED         0x06
@@ -61,7 +61,7 @@ void Color_init(void);
 void ack_polling(unsigned char device_address);
 void write_register(unsigned char register_name, unsigned char register_value);
 void read_register(unsigned char register_name);
-void color_read(void);
+void color_read(unsigned char *msg, unsigned char len);
 
 
 #endif	/* COLORSENSOR_H */
